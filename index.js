@@ -2,7 +2,6 @@
 const fs=require('fs')
 /**
  * 循环遍历当前目录下的所有文件
- * @returns {Promise<void>}
  */
 
 function getAllFIle(dirName,filesList){
@@ -10,7 +9,6 @@ function getAllFIle(dirName,filesList){
     const files = fs.readdirSync(dirName); // 需要用到同步读取
     files.forEach((file) => {
         const states = fs.statSync(dirName + "/" + file);
-        // ❤❤❤ 判断是否是目录，是就继续递归
         if (states.isDirectory()) {
             getAllFIle(dirName + "/" + file, filesList);
         } else {
@@ -21,7 +19,7 @@ function getAllFIle(dirName,filesList){
 
 }
 let filesList=[]
-getAllFIle(`${__dirname}/source`,filesList)
+getAllFIle(`${__dirname}`,filesList)
 
 console.log(filesList)
 
