@@ -1,28 +1,53 @@
 'use strict';
 const fs=require('fs')
+const BackUpDomain=[
+    'https://cdn.staticaly.com',
+    'https://jsd.cdn.zzko.cn',
+    'https://cdn.jsdelivr.net'
+]
+const CDNPrefixRouter="https://cdn.staticaly.com/gh/142vip/cdn_service@"
+const IgnoreDirNameList=['.git','.idea','index.js','LICENSE','README.md','readme.md']
 /**
  * 循环遍历当前目录下的所有文件
  */
-
 function getAllFIle(dirName,filesList){
-    // 获取当前目录下的文件|目录名
     const files = fs.readdirSync(dirName); // 需要用到同步读取
     files.forEach((file) => {
         const states = fs.statSync(dirName + "/" + file);
-        if (states.isDirectory()) {
-            getAllFIle(dirName + "/" + file, filesList);
-        } else {
-            // 不是就将文件push进数组，此处可以正则匹配是否是 .js 先忽略
-            filesList.push(dirName+ "/" + file);
+        if(!IgnoreDirNameList.includes(file)){
+            if (states.isDirectory()) {
+                getAllFIle(dirName + "/" + file, filesList);
+            } else {
+                // 不是就将文件push进数组，此处可以正则匹配是否是 .js 先忽略
+                filesList.push(dirName+ "/" + file);
+            }
         }
-    });
 
+    });
 }
 let filesList=[]
-getAllFIle(`${__dirname}`,filesList)
+getAllFIle('.',filesList)
 
-console.log(filesList)
 
+// main分支
+console.log('\nmain分支下的cdn访问链接：\n')
 for(let filename of filesList){
-    console.log(filename)
+    // 去掉前缀
+    const realFilePath=filename.slice(1)
+    if (escape(realFilePath).indexOf("%u") < 0) {
+        console.log(`${CDNPrefixRouter}main${realFilePath}`)
+    } else {
+        console.log(`${realFilePath}：没有包含中文,生成的CDN链接可能访问不存在，建议修改！！！`);
+    }
+}
+
+console.log('\nnext分支下的cdn访问链接：\n')
+// next分支
+for(let filename of filesList){
+    const realFilePath=filename.slice(1)
+    if (escape(realFilePath).indexOf("%u") < 0) {
+        console.log(`${CDNPrefixRouter}next${realFilePath}`)
+    } else {
+        console.log(`${realFilePath}：没有包含中文,生成的CDN链接可能访问不存在，建议修改！！`);
+    }
 }
