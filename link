@@ -1,12 +1,17 @@
+#!/usr/bin/env node
+
 'use strict';
 const fs=require('fs')
 const BackUpDomain=[
     'https://cdn.staticaly.com',
     'https://jsd.cdn.zzko.cn',
-    'https://cdn.jsdelivr.net'
+    'https://cdn.jsdelivr.net',
+    'https://cdn.statically.io'
 ]
-const CDNPrefixRouter="https://cdn.staticaly.com/gh/142vip/cdn_service@"
-const IgnoreDirNameList=['.git','.idea','index.js','LICENSE','README.md','readme.md']
+const CDNPrefixRouter=`${BackUpDomain[3]}/gh/142vip/cdn_service@`;
+
+// 忽略的文件
+const IgnoreDirNameList=['.git','.idea','link','LICENSE','README.md','readme.md']
 /**
  * 循环遍历当前目录下的所有文件
  */
@@ -37,7 +42,7 @@ for(let filename of filesList){
     if (escape(realFilePath).indexOf("%u") < 0) {
         console.log(`${CDNPrefixRouter}main${realFilePath}`)
     } else {
-        console.log(`${realFilePath}：没有包含中文,生成的CDN链接可能访问不存在，建议修改！！！`);
+        console.log(`${realFilePath} -- 没有包含中文,生成的CDN链接可能访问不存在，建议修改！！！`);
     }
 }
 
@@ -48,6 +53,6 @@ for(let filename of filesList){
     if (escape(realFilePath).indexOf("%u") < 0) {
         console.log(`${CDNPrefixRouter}next${realFilePath}`)
     } else {
-        console.log(`${realFilePath}：没有包含中文,生成的CDN链接可能访问不存在，建议修改！！`);
+        console.log(`${realFilePath} -- 没有包含中文,生成的CDN链接可能访问不存在，建议修改！！`);
     }
 }
