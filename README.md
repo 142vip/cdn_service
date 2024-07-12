@@ -3,18 +3,6 @@
 142vip平台相关cdn业务，提供静态资源加速访问服务
 
 
-## 按照项目进行划分
-
-- [x] source_back 旧图片备份
-- [x] media【自媒体宣传 例如：公众号】
-- [x] main-vip
-- [ ] xmind【思维导图】
-- [ ] oauth-client
-- [ ] oauth-login
-- [x] doc_book 博客笔记相关
-  - [x] 408CSFamily【简称：408】
-  - [x] JavaScriptCollection【简称：jsc】
-
 ## 访问方式
 
 例如：https://cdn.statically.io/gh/142vip/cdn_service@main/we_media/qr_code/wechat_code.jpg
@@ -39,6 +27,10 @@ npm publish
 # 指定仓库发布
 npm publish --access public --registry  https://registry.npmjs.org
 ```
+
+## 参考
+
+- picx: https://github.com/XPoet/picx
 
 ## 证书
 

@@ -8,10 +8,10 @@ const BackUpDomain=[
     'https://cdn.jsdelivr.net',
     'https://cdn.statically.io'
 ]
-const CDNPrefixRouter=`${BackUpDomain[3]}/gh/142vip/cdn_service@`;
+const CDNPrefixRouter=`${BackUpDomain[2]}/gh/142vip/cdn_service@`;
 
 // 忽略的文件
-const IgnoreDirNameList=['.git','.idea','link','LICENSE','README.md','readme.md']
+const IgnoreDirNameList=['.git','.idea','link','LICENSE','README.md','readme.md',"node_modules","scripts"]
 /**
  * 循环遍历当前目录下的所有文件
  */
@@ -42,7 +42,7 @@ for(let filename of filesList){
     if (escape(realFilePath).indexOf("%u") < 0) {
         console.log(`${CDNPrefixRouter}main${realFilePath}`)
     } else {
-        console.log(`${realFilePath} -- 没有包含中文,生成的CDN链接可能访问不存在，建议修改！！！`);
+        console.log(`${realFilePath} -- 包含中文,生成的CDN链接可能访问不存在，建议修改！！！`);
     }
 }
 
@@ -53,6 +53,6 @@ for(let filename of filesList){
     if (escape(realFilePath).indexOf("%u") < 0) {
         console.log(`${CDNPrefixRouter}next${realFilePath}`)
     } else {
-        console.log(`${realFilePath} -- 没有包含中文,生成的CDN链接可能访问不存在，建议修改！！`);
+        console.log(`${realFilePath} -- 包含中文,生成的CDN链接可能访问不存在，建议修改！！`);
     }
 }

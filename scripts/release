@@ -1,12 +1,12 @@
 #!/bin/bash
 
-##
-## 版本发布脚本
-## 链接：https://jstools.dev/version-bump-prompt/
-## 使用:
-##    - ./scripts/release
-##    - ./scripts/release example
-##
+#
+# 版本发布脚本
+# 链接：https://jstools.dev/version-bump-prompt/
+# 使用:
+#    - ./scripts/release
+#    - ./scripts/release example
+#
 
 ## 利用commit-and-tag-version生成changelog文档，并跳过commit、tag操作
 readonly generateChangeLog='pnpm commit-and-tag-version && git add CHANGELOG.md'
