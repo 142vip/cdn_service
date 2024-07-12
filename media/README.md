@@ -1,4 +1,4 @@
-# @142vip/cdn-service
+# media【自媒体宣传 例如：公众号】
 
 142vip平台相关cdn业务，提供静态资源加速访问服务
 
@@ -26,19 +26,6 @@
 
 ## 使用
 
-
-## 版本发布
-
-```bash
-# npm 账号登录
-npm login --registry  https://registry.npmjs.org
-
-## 某个模块发布
-npm publish
-
-# 指定仓库发布
-npm publish --access public --registry  https://registry.npmjs.org
-```
 
 ## 证书
 
