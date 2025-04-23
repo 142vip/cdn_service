@@ -26,7 +26,7 @@
     "clean:hooks": "npx fa clean --git-hooks --all --ignore-tips",
     "lint": "npx fa lint",
     "lint:fix": "npx fa lint --fix",
-    "release": "npx fa release --vip -F './*' "
+    "release": "npx fa release --vip"
   },
   "devDependencies": {
     "@142vip/commit-linter": "0.0.1-alpha.1",
