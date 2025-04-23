@@ -1,0 +1,35 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## v0.0.1-alpha.1 (2025-04-23)
+
+### ✨ Features
+
+- Cdn 支持 &nbsp;-&nbsp; by **Rong姐姐好可爱** [<samp>(d9d21)</samp>](https://github.com/142vip/cdn_service/commit/d9d21fb)
+- 新增重命名测试 &nbsp;-&nbsp; by **今晚要吃巧乐兹** [<samp>(7fa8c)</samp>](https://github.com/142vip/cdn_service/commit/7fa8c3e)
+- 新增time logo &nbsp;-&nbsp; by **今晚要吃巧乐兹** [<samp>(50866)</samp>](https://github.com/142vip/cdn_service/commit/5086689)
+- 新增408logo图片 &nbsp;-&nbsp; by **chufan** [<samp>(76b4e)</samp>](https://github.com/142vip/cdn_service/commit/76b4e11)
+- 新增有效的CDN域名，删除无效图片 &nbsp;-&nbsp; by **chufan** [<samp>(21c2c)</samp>](https://github.com/142vip/cdn_service/commit/21c2c6b)
+- Jsc logo 更新 &nbsp;-&nbsp; by **chufan** [<samp>(88340)</samp>](https://github.com/142vip/cdn_service/commit/88340dc)
+- 添加公众号 &nbsp;-&nbsp; by **chufan** [<samp>(441f4)</samp>](https://github.com/142vip/cdn_service/commit/441f4c5)
+- 更新自媒体二维码 &nbsp;-&nbsp; by **chufan** [<samp>(a0cc6)</samp>](https://github.com/142vip/cdn_service/commit/a0cc6d3)
+- 整体结构重构，优化脚本逻辑，提供`CDN`加速 &nbsp;-&nbsp; by **chufan** in https://github.com/142vip/cdn_service/issues/1 [<samp>(c1b38)</samp>](https://github.com/142vip/cdn_service/commit/c1b38a7)
+- **main-vip**:
+  - Svg图标 &nbsp;-&nbsp; by **chufan** [<samp>(4afe9)</samp>](https://github.com/142vip/cdn_service/commit/4afe949)
+  - Update &nbsp;-&nbsp; by **chufan** [<samp>(dd0ed)</samp>](https://github.com/142vip/cdn_service/commit/dd0ed14)
+- **media**:
+  - 新媒体宣传相关 &nbsp;-&nbsp; by **chufan** [<samp>(6c545)</samp>](https://github.com/142vip/cdn_service/commit/6c5454a)
+- **url**:
+  - 基于分支快速生成图片访问URL地址 &nbsp;-&nbsp; by **chufan** [<samp>(5b23e)</samp>](https://github.com/142vip/cdn_service/commit/5b23eb3)
+
+### 🐛 Bug Fixes
+
+- 修复`release`命令使用异常 &nbsp;-&nbsp; by **chufan** [<samp>(c45a5)</samp>](https://github.com/142vip/cdn_service/commit/c45a52e)
+- 修复`npx changelog`命令生成文档异常 &nbsp;-&nbsp; by **chufan** [<samp>(06e5e)</samp>](https://github.com/142vip/cdn_service/commit/06e5ec4)
+
+### 💅 Refactors
+
+- 新增规划，调整目录 &nbsp;-&nbsp; by **今晚要吃巧乐兹** [<samp>(91fa5)</samp>](https://github.com/142vip/cdn_service/commit/91fa55a)
+
+**Release New Version v0.0.1-alpha.1 [👉 View Changes On GitHub](https://github.com/142vip/cdn_service/compare/null...v0.0.1-alpha.1)**
