@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## 0.0.1-alpha.1 (2024-07-12)
 
-
 ### ✨ Features
 
 * cdn 支持 ([d9d21fb](https://github.com/142vip/cdn_service/commit/d9d21fbc1f3f21450e5edeef2d7c75fd2efe0563))

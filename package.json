@@ -1,37 +1,51 @@
 {
   "name": "@142vip/cdn-service",
+  "type": "module",
   "version": "0.0.1-alpha.1",
-  "description": "142vip平台相关cdn业务，提供静态资源加速访问服务",
   "private": true,
-  "engines": {
-    "node": ">=10.0.0"
-  },
+  "packageManager": "pnpm@9.6.0",
+  "description": "142vip平台相关cdn业务，提供静态资源加速访问服务",
   "author": {
     "name": "微信公众号：储凡",
     "email": "fairy_vip@2925.com",
     "url": "https://github.com/142vip",
     "homePage": "https://142vip.cn"
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/142vip/cdn_service"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "scripts": {
-    "preinstall": "npx only-allow pnpm && chmod +x ./scripts/*",
-    "changelog": "npx pnpm commit-and-tag-version",
-    "build": "npx tsc"
+    "preinstall": "npx only-allow pnpm && chmod 777 ./scripts/*",
+    "postinstall": "simple-git-hooks",
+    "clean": "npx fa clean --dist --deps --all --ignore-tips",
+    "clean:hooks": "npx fa clean --git-hooks --all --ignore-tips",
+    "lint": "npx fa lint",
+    "lint:fix": "npx fa lint --fix",
+    "release": "npx fa release --vip -F './*' "
   },
   "devDependencies": {
-    "bumpp": "^9.2.0",
-    "commit-and-tag-version": "11.2.3",
-    "enquirer": "^2.4.1",
-    "fs-extra": "^11.2.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "@142vip/commit-linter": "0.0.1-alpha.1",
+    "@142vip/eslint-config": "0.0.1-alpha.4",
+    "@142vip/fairy-cli": "0.0.3-alpha.23",
+    "@142vip/utils": "0.0.1-alpha.35",
+    "@types/node": "22.10.7",
+    "fs-extra": "11.2.0",
+    "only-allow": "1.2.1",
+    "simple-git-hooks": "2.12.1",
+    "ts-node": "10.9.2",
+    "typescript": "5.8.3"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/142vip/cdn_service"
-  },
-  "license": "MIT"
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint:fix",
+    "commit-msg": "node --experimental-strip-types scripts/core/verify-commit.ts"
+  }
 }

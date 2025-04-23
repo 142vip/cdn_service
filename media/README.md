@@ -2,7 +2,6 @@
 
 142vip平台相关cdn业务，提供静态资源加速访问服务
 
-
 ## 按照项目进行划分
 
 - [x] source_back 旧图片备份
@@ -19,13 +18,9 @@
 
 例如：https://cdn.statically.io/gh/142vip/cdn_service@main/we_media/qr_code/wechat_code.jpg
 
-
 格式：支持的CDN域名/gh/账号名/仓库名/@分支名/多重文件名
 
-
-
 ## 使用
-
 
 ## 证书
 
