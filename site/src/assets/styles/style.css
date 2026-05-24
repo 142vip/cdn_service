@@ -1,0 +1,188 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--el-bg-color-page);
+  color: var(--el-text-color-primary);
+}
+
+/* 三栏布局 */
+.app-root {
+  height: 100%;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--el-border-color-light);
+  background: var(--el-bg-color);
+}
+
+.brand-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-trigger:focus-visible {
+  outline: 2px solid var(--el-color-primary-light-5);
+  outline-offset: 2px;
+}
+
+.site-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.brand-trigger h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.app-body {
+  height: 100%;
+}
+
+.app-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.aside-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--el-border-color-light);
+  background: var(--el-bg-color);
+  transition: width 0.25s ease;
+}
+
+.sidebar-aside.is-collapsed {
+  border-right: none;
+}
+
+.sidebar-aside.is-collapsed .sidebar-tree {
+  visibility: hidden;
+}
+
+.sidebar-tree {
+  padding: 4px 8px 12px;
+}
+
+/* 目录间距稍大，文件更紧凑 */
+.sidebar-tree :deep(.el-tree-node__content) {
+  border-radius: 4px;
+}
+
+.sidebar-tree :deep(.el-tree-node__content:has(.tree-file)) {
+  height: 26px;
+  margin-bottom: 0;
+}
+
+.sidebar-tree :deep(.el-tree-node__content:has(.tree-dir)) {
+  height: 32px;
+  margin-top: 10px;
+}
+
+.sidebar-tree :deep(.el-tree > .el-tree-node:first-child > .el-tree-node__content:has(.tree-dir)) {
+  margin-top: 4px;
+}
+
+.sidebar-tree :deep(.el-tree-node__expand-icon) {
+  padding: 4px;
+}
+
+.sidebar-tree :deep(.el-tree-node__label) {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-aside {
+  border-right: none;
+  border-left: 1px solid var(--el-border-color-light);
+}
+
+.panel-title {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--el-text-color-secondary);
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+.main-panel {
+  padding: 0 !important;
+  overflow: auto;
+  background: var(--el-bg-color);
+}
+
+.detail-panel {
+  padding: 16px;
+}
+
+.preview-box {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  background: var(--el-fill-color-lighter);
+  border-radius: var(--el-border-radius-base);
+}
+
+.preview-box img {
+  max-width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.is-clickable {
+  cursor: pointer;
+}
+
+.is-clickable:hover {
+  opacity: 0.85;
+}
+
+/* 禁用 el-table 树形展开 */
+.file-table :deep(.el-table__expand-icon),
+.file-table :deep(.el-table__placeholder) {
+  display: none;
+}
+
+.file-table :deep(.el-table__indent) {
+  padding-left: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  .detail-aside {
+    display: none;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@142vip/cdn-site",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@element-plus/icons-vue": "2.3.2",
+    "cropperjs": "1.6.2",
+    "element-plus": "2.14.0",
+    "pinyin-pro": "3.28.1",
+    "vue": "3.5.34"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "5.2.4",
+    "typescript": "5.8.3",
+    "unplugin-auto-import": "19.3.0",
+    "unplugin-vue-components": "28.8.0",
+    "vite": "6.4.2",
+    "vue-tsc": "2.2.12"
+  }
+}

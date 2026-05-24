@@ -1,2 +1,7 @@
 .idea
 node_modules
+site/dist
+site/node_modules
+site/src/types/auto-imports.d.ts
+site/src/types/components.d.ts
+site/src/assets/manifest.json

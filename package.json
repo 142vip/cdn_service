@@ -17,7 +17,7 @@
     "url": "https://github.com/142vip/cdn_service"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm && chmod 777 ./scripts/*",
@@ -26,18 +26,20 @@
     "clean:hooks": "npx fa clean --git-hooks --all --ignore-tips",
     "lint": "npx fa lint",
     "lint:fix": "npx fa lint --fix",
-    "release": "npx fa release --vip"
+    "release": "npx fa release --vip",
+    "site:dev": "pnpm -C site exec vite",
+    "site:build": "pnpm -C site exec vue-tsc --noEmit && pnpm -C site exec vite build",
+    "site:preview": "pnpm -C site exec vite preview"
   },
   "devDependencies": {
-    "@142vip/changelog": "0.0.1-alpha.18",
-    "@142vip/commit-linter": "0.0.1-alpha.1",
-    "@142vip/eslint-config": "0.0.1-alpha.4",
-    "@142vip/fairy-cli": "0.0.3-alpha.23",
-    "@142vip/utils": "0.0.1-alpha.35",
+    "@142vip/changelog": "0.0.1-alpha.23",
+    "@142vip/commit-linter": "0.0.1-alpha.2",
+    "@142vip/eslint-config": "0.0.1-alpha.5",
+    "@142vip/fairy-cli": "0.0.3-alpha.30",
+    "@142vip/utils": "0.0.1-alpha.50",
     "@types/node": "22.10.7",
-    "fs-extra": "11.2.0",
     "only-allow": "1.2.1",
-    "simple-git-hooks": "2.12.1",
+    "simple-git-hooks": "2.13.0",
     "ts-node": "10.9.2",
     "typescript": "5.8.3"
   },
@@ -47,6 +49,6 @@
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint:fix",
-    "commit-msg": "node --experimental-strip-types scripts/core/verify-commit.ts"
+    "commit-msg": "npx node --loader ts-node/esm --no-warnings scripts/core/verify-commit.ts"
   }
 }
