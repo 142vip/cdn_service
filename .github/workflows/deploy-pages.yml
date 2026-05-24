@@ -10,10 +10,6 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: pages-deploy
-  cancel-in-progress: false
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -34,38 +30,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - uses: actions/cache/restore@v4
-        with:
-          path: pages-site
-          key: pages-v2-${{ github.sha }}
-          restore-keys: pages-v2-
-
-      - name: Build & merge
-        env:
-          VITE_BASE_PATH: ${{ github.ref_name == 'main' && '/cdn_service/' || '/cdn_service/next/' }}
+      - name: Build & deploy
         run: |
           pnpm site:build
-          # 清理旧版错误结构（根目录 meta refresh → cdn_service/）
-          rm -rf pages-site/cdn_service
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            mkdir -p pages-site
-            rm -rf pages-site/*
-            cp -r site/dist/* pages-site/
-          else
-            mkdir -p pages-site/next
-            rm -rf pages-site/next/*
-            cp -r site/dist/* pages-site/next/
-          fi
-          touch pages-site/.nojekyll
-
-      - uses: actions/cache/save@v4
-        with:
-          path: pages-site
-          key: pages-v2-${{ github.sha }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: pages-site
+          path: site/dist
 
       - uses: actions/deploy-pages@v4
         id: deployment
