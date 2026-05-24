@@ -45,14 +45,12 @@ jobs:
           VITE_BASE_PATH: ${{ github.ref_name == 'main' && '/cdn_service/' || '/cdn_service/next/' }}
         run: |
           pnpm site:build
-          TARGET="pages-site/cdn_service${{ github.ref_name == 'main' && '' || '/next' }}"
+          # GitHub 项目站 URL 已含 /cdn_service/，产物直接放 artifact 根目录（main）或 next/ 子目录
+          TARGET="pages-site${{ github.ref_name == 'main' && '' || '/next' }}"
           mkdir -p "$TARGET"
           rm -rf "$TARGET"/*
           cp -r site/dist/* "$TARGET/"
-          [ -f pages-site/index.html ] || printf '%s\n' \
-            '<!DOCTYPE html><html><head><meta charset="UTF-8">' \
-            '<meta http-equiv="refresh" content="0;url=cdn_service/"></head><body></body></html>' \
-            > pages-site/index.html
+          touch pages-site/.nojekyll
 
       - uses: actions/cache/save@v4
         with:
