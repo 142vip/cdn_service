@@ -6,7 +6,7 @@
 
 - [x] source_back 旧图片备份
 - [x] media【自媒体宣传 例如：公众号】
-- [x] main-vip
+- [x] vip-main
 - [ ] xmind【思维导图】
 - [ ] oauth-client
 - [ ] oauth-login

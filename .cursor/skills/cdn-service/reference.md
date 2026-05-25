@@ -84,8 +84,8 @@ utils/
 Workflow：`.github/workflows/deploy-pages.yml`
 
 - 触发：`push` 到 `main` / `next`
-- `main` → `https://142vip.github.io/cdn_service/`
-- `next` → `https://142vip.github.io/cdn_service/next/`
+- 访问地址：`https://142vip.github.io/cdn_service/`
+- `main` / `next` 推送均会触发部署，Pages 地址相同
 
 ## README 模板
 
