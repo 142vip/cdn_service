@@ -21,7 +21,7 @@ siteConfig.maxFileSize // 2MB
 siteConfig.footer // 页脚、ICP、百度统计 ID
 ```
 
-修改 CDN 域名或分支后重新 `pnpm site:build` 部署。
+修改 CDN 域名或分支后重新 `pnpm build:site` 部署。
 
 ## 图片规范
 

@@ -31,15 +31,15 @@ cdn_service/
 │       └── utils/
 ├── scripts/core/verify-commit.ts
 ├── pnpm-workspace.yaml        # packages: [site]，排除 apps/
-└── package.json               # site:* 脚本在此定义
+└── package.json               # dev:site / build:site / preview:site
 ```
 
 ## 双模式
 
 | 模式 | 命令 | 行为 |
 | --- | --- | --- |
-| 本地管理 | `pnpm site:dev` | `import.meta.env.DEV`，Vite 中间件读写 `apps/` |
-| CDN 浏览 | `pnpm site:build` | 读 `manifest.json`，只读 + 复制链接 |
+| 本地管理 | `pnpm dev:site` | `siteConfig.isLocalManage`，Vite 中间件读写 `apps/` |
+| CDN 浏览 | `pnpm build:site` | 读 `manifest.json`，只读 + 复制链接 |
 
 本地改动需自行 `git commit && git push` 后 CDN 才生效。
 
@@ -65,7 +65,7 @@ https://{host}/gh/142vip/cdn_service@{branch}/apps/{path}
 - [ ] 校验命名、格式、大小
 - [ ] 放置/更新文件
 - [ ] 更新 README.md
-- [ ] pnpm site:dev 本地确认
+- [ ] pnpm dev:site 本地确认
 - [ ] commit（scope: 408 | jsc | main-vip | media | site | scripts）
 ```
 
@@ -73,9 +73,9 @@ https://{host}/gh/142vip/cdn_service@{branch}/apps/{path}
 
 ```bash
 pnpm i
-pnpm site:dev
-pnpm site:build
-pnpm site:preview
+pnpm dev:site
+pnpm build:site
+pnpm preview:site
 pnpm lint:fix
 ```
 
