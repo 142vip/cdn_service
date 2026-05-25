@@ -1,4 +1,4 @@
-# vip-amin
+# vip-admin
 
 VIP 管理端静态资源目录（预留）。
 
