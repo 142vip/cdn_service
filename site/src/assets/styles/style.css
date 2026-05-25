@@ -89,8 +89,24 @@ body {
   border-right: none;
 }
 
-.sidebar-aside.is-collapsed .sidebar-tree {
+.sidebar-aside.is-collapsed .sidebar-tree,
+.sidebar-aside.is-collapsed .sidebar-mode,
+.sidebar-aside.is-collapsed .sidebar-stories-menu {
   visibility: hidden;
+}
+
+.sidebar-mode {
+  padding: 10px 12px 8px;
+}
+
+.sidebar-stories-menu {
+  margin-top: 4px;
+  border-right: none;
+}
+
+.sidebar-stories-menu :deep(.el-menu-item) {
+  height: 40px;
+  line-height: 40px;
 }
 
 .sidebar-tree {

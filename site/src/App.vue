@@ -3,23 +3,30 @@ import type { ElTable } from 'element-plus'
 import type { FileNode, TableRow } from '@/utils/validate'
 import { Crop, Folder, Grid, List, Picture, Refresh, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, provide, ref, watch } from 'vue'
 import CdnEnvLinks from '@/components/CdnEnvLinks.vue'
 import FileGallery from '@/components/FileGallery.vue'
 import ImageCropDialog from '@/components/ImageCropDialog.vue'
 import ImagePreviewDialog from '@/components/ImagePreviewDialog.vue'
+import PhotosJsonView from '@/components/PhotosJsonView.vue'
+import PhotoStoriesPanel from '@/components/PhotoStoriesPanel.vue'
 import SidebarTree from '@/components/SidebarTree.vue'
 import SiteFooter from '@/components/SiteFooter.vue'
+import { PHOTO_STORIES_KEY } from '@/composables/photo-stories-key'
 import { useFileBrowser } from '@/composables/useFileBrowser'
 import { localPreviewUrl, useLocalFiles } from '@/composables/useLocalFiles'
 import { useManifest } from '@/composables/useManifest'
+import { usePhotoStories } from '@/composables/usePhotoStories'
 import { siteConfig } from '@/site.config'
 import { cdnPreviewUrl } from '@/utils/cdn'
 import { isConvertibleImage, isCropableImage, isRasterImage } from '@/utils/image'
-import { formatSize, formatSizeOrFileCount, getFileSuggestion, suggestRename } from '@/utils/validate'
+import { flattenFiles, formatSize, formatSizeOrFileCount, getFileSuggestion, suggestRename } from '@/utils/validate'
 
 const local = useLocalFiles()
 const manifest = useManifest()
+const photoStories = usePhotoStories()
+
+provide(PHOTO_STORIES_KEY, photoStories)
 
 const tableRef = ref<InstanceType<typeof ElTable>>()
 const renameVisible = ref(false)
@@ -32,12 +39,32 @@ const previewVisible = ref(false)
 const previewTarget = ref<FileNode | null>(null)
 
 const SIDEBAR_STORAGE_KEY = 'cdn-site-sidebar-visible'
+const SIDEBAR_VIEW_STORAGE_KEY = 'cdn-site-sidebar-view'
+const STORIES_SUB_VIEW_STORAGE_KEY = 'cdn-site-stories-sub-view'
 const FILE_VIEW_STORAGE_KEY = 'cdn-site-file-view'
 
 type FileViewMode = 'list' | 'grid'
+type SidebarView = 'files' | 'stories'
+type StoriesSubView = 'list' | 'json'
+
+function readSidebarView(): SidebarView {
+  const saved = localStorage.getItem(SIDEBAR_VIEW_STORAGE_KEY)
+  if (saved === 'photos-json') {
+    localStorage.setItem(STORIES_SUB_VIEW_STORAGE_KEY, 'json')
+    localStorage.setItem(SIDEBAR_VIEW_STORAGE_KEY, 'stories')
+    return 'stories'
+  }
+  return saved === 'stories' ? 'stories' : 'files'
+}
+
+function readStoriesSubView(): StoriesSubView {
+  return localStorage.getItem(STORIES_SUB_VIEW_STORAGE_KEY) === 'json' ? 'json' : 'list'
+}
 
 /** 默认隐藏侧栏，点击左上角按钮展开 */
 const sidebarVisible = ref(localStorage.getItem(SIDEBAR_STORAGE_KEY) === '1')
+const sidebarView = ref<SidebarView>(readSidebarView())
+const storiesSubView = ref<StoriesSubView>(readStoriesSubView())
 const fileViewMode = ref<FileViewMode>(
   localStorage.getItem(FILE_VIEW_STORAGE_KEY) === 'grid' ? 'grid' : 'list',
 )
@@ -53,6 +80,17 @@ watch(fileViewMode, (mode) => {
 function toggleSidebar() {
   sidebarVisible.value = !sidebarVisible.value
 }
+
+const vipMainImagePaths = computed(() => {
+  if (!siteConfig.isLocalManage)
+    return []
+  return flattenFiles(local.tree.value)
+    .filter(file => file.type === 'file' && file.path.startsWith('apps/vip-main/'))
+    .filter(file => file.ext && (isRasterImage(file.ext) || file.ext === 'svg'))
+    .map(file => file.path)
+})
+
+const showFileBrowser = computed(() => sidebarView.value === 'files')
 
 const isReady = computed(() =>
   siteConfig.isLocalManage
@@ -82,6 +120,18 @@ const {
   handleTreeNodeClick,
   handleRowClick,
 } = browser
+
+watch(sidebarView, (view) => {
+  localStorage.setItem(SIDEBAR_VIEW_STORAGE_KEY, view)
+  if (view === 'stories')
+    photoStories.load()
+  if (view !== 'files')
+    selectedFile.value = null
+}, { immediate: true })
+
+watch(storiesSubView, (view) => {
+  localStorage.setItem(STORIES_SUB_VIEW_STORAGE_KEY, view)
+})
 
 function openImagePreview(file: FileNode) {
   if (!isImage(file))
@@ -331,7 +381,27 @@ watch([selectedFile, fileList, fileViewMode], async () => {
           :class="{ 'is-collapsed': !sidebarVisible }"
         >
           <ElScrollbar>
+            <div class="sidebar-mode">
+              <ElSelect v-model="sidebarView" placeholder="选择视图">
+                <ElOption label="图床目录" value="files" />
+                <ElOption label="照片故事" value="stories" />
+              </ElSelect>
+              <ElMenu
+                v-if="sidebarView === 'stories'"
+                :default-active="storiesSubView"
+                class="sidebar-stories-menu"
+                @select="(index: string) => storiesSubView = index as StoriesSubView"
+              >
+                <ElMenuItem index="list">
+                  照片墙
+                </ElMenuItem>
+                <ElMenuItem index="json">
+                  photos.json
+                </ElMenuItem>
+              </ElMenu>
+            </div>
             <SidebarTree
+              v-if="showFileBrowser"
               :data="treeData"
               :current-key="treeCurrentKey"
               @node-click="handleTreeNodeClick"
@@ -340,73 +410,80 @@ watch([selectedFile, fileList, fileViewMode], async () => {
         </ElAside>
 
         <ElMain class="main-panel">
-          <div class="panel-title panel-title--toolbar">
-            <span>{{ listTitle }}</span>
-            <ElRadioGroup v-model="fileViewMode" size="small">
-              <ElRadioButton value="list">
-                <ElIcon><List /></ElIcon>
-                列表
-              </ElRadioButton>
-              <ElRadioButton value="grid">
-                <ElIcon><Grid /></ElIcon>
-                照片墙
-              </ElRadioButton>
-            </ElRadioGroup>
-          </div>
-          <ElTable
-            v-if="fileViewMode === 'list'"
-            ref="tableRef"
-            class="file-table"
-            :data="fileList"
-            row-key="path"
-            stripe
-            highlight-current-row
-            :row-class-name="fileRowClassName"
-            @row-click="handleRowClick"
-            @row-dblclick="handleRowDblClick"
-          >
-            <ElTableColumn label="名称" min-width="180">
-              <template #default="{ row }">
-                <ElSpace>
-                  <ElIcon class="file-icon">
-                    <component :is="row.type === 'directory' ? Folder : Picture" />
-                  </ElIcon>
-                  <span>{{ row.name }}</span>
-                </ElSpace>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn v-if="globalSearch.trim()" label="路径" min-width="200" show-overflow-tooltip prop="path" />
-            <ElTableColumn label="类型" width="72">
-              <template #default="{ row }">
-                {{ row.type === 'directory' ? '目录' : row.ext?.toUpperCase() }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn label="大小" width="108">
-              <template #default="{ row }">
-                {{ formatSizeOrFileCount(row) }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn v-if="siteConfig.isLocalManage" label="建议" min-width="180" show-overflow-tooltip>
-              <template #default="{ row }">
-                <ElText :type="row.issues.length ? 'warning' : 'info'" size="small">
-                  {{ getFileSuggestion(row) }}
-                </ElText>
-              </template>
-            </ElTableColumn>
-          </ElTable>
-          <FileGallery
-            v-else
-            :items="fileList"
-            :selected-path="selectedFile?.path"
-            :is-image="isImage"
-            :preview-url="filePreviewUrl"
-            @navigate="handleRowClick"
-            @select="handleGallerySelect"
-            @preview="handleGalleryPreview"
+          <PhotoStoriesPanel
+            v-if="sidebarView === 'stories' && storiesSubView === 'list'"
+            :image-paths="vipMainImagePaths"
           />
+          <PhotosJsonView v-else-if="sidebarView === 'stories' && storiesSubView === 'json'" />
+          <template v-else>
+            <div class="panel-title panel-title--toolbar">
+              <span>{{ listTitle }}</span>
+              <ElRadioGroup v-model="fileViewMode" size="small">
+                <ElRadioButton value="list">
+                  <ElIcon><List /></ElIcon>
+                  列表
+                </ElRadioButton>
+                <ElRadioButton value="grid">
+                  <ElIcon><Grid /></ElIcon>
+                  照片墙
+                </ElRadioButton>
+              </ElRadioGroup>
+            </div>
+            <ElTable
+              v-if="fileViewMode === 'list'"
+              ref="tableRef"
+              class="file-table"
+              :data="fileList"
+              row-key="path"
+              stripe
+              highlight-current-row
+              :row-class-name="fileRowClassName"
+              @row-click="handleRowClick"
+              @row-dblclick="handleRowDblClick"
+            >
+              <ElTableColumn label="名称" min-width="180">
+                <template #default="{ row }">
+                  <ElSpace>
+                    <ElIcon class="file-icon">
+                      <component :is="row.type === 'directory' ? Folder : Picture" />
+                    </ElIcon>
+                    <span>{{ row.name }}</span>
+                  </ElSpace>
+                </template>
+              </ElTableColumn>
+              <ElTableColumn v-if="globalSearch.trim()" label="路径" min-width="200" show-overflow-tooltip prop="path" />
+              <ElTableColumn label="类型" width="72">
+                <template #default="{ row }">
+                  {{ row.type === 'directory' ? '目录' : row.ext?.toUpperCase() }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn label="大小" width="108">
+                <template #default="{ row }">
+                  {{ formatSizeOrFileCount(row) }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn v-if="siteConfig.isLocalManage" label="建议" min-width="180" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <ElText :type="row.issues.length ? 'warning' : 'info'" size="small">
+                    {{ getFileSuggestion(row) }}
+                  </ElText>
+                </template>
+              </ElTableColumn>
+            </ElTable>
+            <FileGallery
+              v-else
+              :items="fileList"
+              :selected-path="selectedFile?.path"
+              :is-image="isImage"
+              :preview-url="filePreviewUrl"
+              @navigate="handleRowClick"
+              @select="handleGallerySelect"
+              @preview="handleGalleryPreview"
+            />
+          </template>
         </ElMain>
 
-        <ElAside width="320px" class="aside-panel detail-aside">
+        <ElAside v-if="showFileBrowser" width="320px" class="aside-panel detail-aside">
           <template v-if="selectedFile">
             <div class="panel-title">
               文件详情

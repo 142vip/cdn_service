@@ -47,8 +47,11 @@ export function resolveAppsAbsolute(repoRoot: string, relativePath: string): str
 }
 
 function validateFile(relativePath: string, size: number): ValidationIssue[] {
-  const issues: ValidationIssue[] = []
   const fileName = path.basename(relativePath)
+  if (fileName === 'photos.json')
+    return []
+
+  const issues: ValidationIssue[] = []
   const ext = path.extname(fileName).slice(1).toLowerCase()
 
   if (siteConfig.chineseRegex.test(relativePath))
@@ -74,7 +77,7 @@ function buildTree(repoRoot: string, relativePath: string): FileNode {
 
   if (stat.isDirectory()) {
     const children = fs.readdirSync(absolutePath, { withFileTypes: true })
-      .filter(e => e.name !== 'README.md')
+      .filter(e => e.name !== 'README.md' && !(siteConfig.hiddenTreeEntries as readonly string[]).includes(e.name))
       .map(e => buildTree(repoRoot, `${relativePath}/${e.name}`))
       .sort((a, b) => {
         if (a.type !== b.type)

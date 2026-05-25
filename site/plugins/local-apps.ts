@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Connect, Plugin } from 'vite'
+import type { LifePhotoItem } from '../src/types/photo-story'
 import { Buffer } from 'node:buffer'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -12,6 +13,7 @@ import {
   scanAppsTree,
   writeAppsFile,
 } from './apps-fs'
+import { readPhotoStories, writePhotoStories } from './photos-json'
 
 interface ApiResponse<T = unknown> {
   ok: boolean
@@ -19,7 +21,7 @@ interface ApiResponse<T = unknown> {
   error?: string
 }
 
-async function readBody(req: IncomingMessage): Promise<Record<string, string>> {
+async function readBody(req: IncomingMessage): Promise<unknown> {
   return new Promise((resolve, reject) => {
     let body = ''
     req.on('data', chunk => (body += chunk))
@@ -90,23 +92,37 @@ function createLocalAppsMiddleware(repoRoot: string): Connect.NextHandleFunction
       }
 
       if (req.method === 'POST' && urlPath === '/__local/rename') {
-        const body = await readBody(req)
+        const body = await readBody(req) as { oldPath: string, newName: string }
         const newPath = renameAppsFile(repoRoot, body.oldPath, body.newName)
         sendJson(res, 200, { ok: true, data: { newPath } })
         return
       }
 
       if (req.method === 'DELETE' && urlPath === '/__local/file') {
-        const body = await readBody(req)
+        const body = await readBody(req) as { path: string }
         deleteAppsFile(repoRoot, body.path)
         sendJson(res, 200, { ok: true })
         return
       }
 
       if (req.method === 'POST' && urlPath === '/__local/write') {
-        const body = await readBody(req)
+        const body = await readBody(req) as { path: string, base64: string }
         writeAppsFile(repoRoot, body.path, Buffer.from(body.base64, 'base64'))
         sendJson(res, 200, { ok: true })
+        return
+      }
+
+      if (req.method === 'GET' && urlPath === '/__local/photos') {
+        sendJson(res, 200, { ok: true, data: { items: readPhotoStories(repoRoot) } })
+        return
+      }
+
+      if (req.method === 'PUT' && urlPath === '/__local/photos') {
+        const body = await readBody(req) as { items?: unknown }
+        if (!Array.isArray(body.items))
+          throw new Error('items 必须是数组')
+        writePhotoStories(repoRoot, body.items as LifePhotoItem[])
+        sendJson(res, 200, { ok: true, data: { items: readPhotoStories(repoRoot) } })
         return
       }
 

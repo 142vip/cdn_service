@@ -41,6 +41,20 @@ export const siteConfig = {
       { label: 'Fastly', host: 'fastly.jsdelivr.net' },
     ] as const satisfies readonly CdnDomainConfig[],
   },
+
+  photoStories: {
+    filePath: 'apps/vip-main/photos.json',
+    categories: [
+      { value: '旅游', label: '旅游', folder: 'travel' },
+      { value: '运动', label: '运动', folder: 'sports' },
+      { value: '做菜', label: '做菜', folder: 'cooking' },
+      { value: '钓鱼', label: '钓鱼', folder: 'fishing' },
+      { value: '日常', label: '日常', folder: 'daily' },
+    ] as const,
+  },
+
+  /** 图床目录树中隐藏的配置文件 */
+  hiddenTreeEntries: ['photos.json'] as const,
 } as const
 
 export type AllowedExtension = typeof siteConfig.allowedExtensions[number]

@@ -2,6 +2,7 @@ import type { Plugin } from 'vite'
 import fs from 'node:fs'
 import path from 'node:path'
 import { buildTreeStats, scanAppsTree } from './apps-fs'
+import { readPhotoStories } from './photos-json'
 
 const MANIFEST_FILE = 'manifest.json'
 
@@ -15,6 +16,7 @@ export function manifestPlugin(repoRoot: string): Plugin {
       generatedAt: new Date().toISOString(),
       tree,
       stats: buildTreeStats(tree),
+      photoStories: readPhotoStories(repoRoot),
     }, null, 2)
     fs.mkdirSync(path.dirname(manifestPath), { recursive: true })
     fs.writeFileSync(manifestPath, content, 'utf-8')

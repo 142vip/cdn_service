@@ -35,8 +35,11 @@ export function issueTagType(code: string): 'danger' | 'warning' | 'info' {
 }
 
 export function validateFile(relativePath: string, size: number): ValidationIssue[] {
-  const issues: ValidationIssue[] = []
   const fileName = relativePath.split('/').pop() ?? relativePath
+  if (fileName === 'photos.json')
+    return []
+
+  const issues: ValidationIssue[] = []
   const ext = getExtension(fileName)
 
   if (siteConfig.chineseRegex.test(relativePath)) {
