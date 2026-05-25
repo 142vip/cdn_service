@@ -1,7 +1,7 @@
 {
   "name": "@142vip/cdn-service",
   "type": "module",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "private": true,
   "packageManager": "pnpm@9.6.0",
   "description": "142vip平台相关cdn业务，提供静态资源加速访问服务",

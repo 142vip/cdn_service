@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## v0.0.1-alpha.2 (2026-05-25)
+
+### ✨ Features
+
+- 站点页面优化，简化代码 &nbsp;-&nbsp; by **chufan** [<samp>(74d96)</samp>](https://github.com/142vip/cdn_service/commit/74d9686)
+- 增加照片墙功能，增强选中、预览的交互效果 &nbsp;-&nbsp; by **chufan** in https://github.com/142vip/cdn_service/issues/2 [<samp>(726a5)</samp>](https://github.com/142vip/cdn_service/commit/726a5f9)
+- 优化组件，支持图片预览、CDN地址下拉选择 &nbsp;-&nbsp; by **chufan** [<samp>(6bfc2)</samp>](https://github.com/142vip/cdn_service/commit/6bfc2ce)
+- **ukulele**:
+  - 相关文件重命名管理 &nbsp;-&nbsp; by **chufan** [<samp>(d8247)</samp>](https://github.com/142vip/cdn_service/commit/d8247b3)
+
+### 💅 Refactors
+
+- 进行系列重构，增加可视化页面 &nbsp;-&nbsp; by **chufan** [<samp>(2bcff)</samp>](https://github.com/142vip/cdn_service/commit/2bcff5d)
+
+### 📖 Documentation
+
+- 更新文档，对文件进行重命名 &nbsp;-&nbsp; by **chufan** [<samp>(8566a)</samp>](https://github.com/142vip/cdn_service/commit/8566af2)
+
+**Release New Version v0.0.1-alpha.2 [👉 View Changes On GitHub](https://github.com/142vip/cdn_service/compare/v0.0.1-alpha.1...v0.0.1-alpha.2)**
+
 ## v0.0.1-alpha.1 (2025-04-23)
 
 ### ✨ Features
