@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { ElTable } from 'element-plus'
-import type { FileNode } from '@/utils/validate'
-import { Crop, Folder, Picture, Refresh, Search } from '@element-plus/icons-vue'
+import type { FileNode, TableRow } from '@/utils/validate'
+import { Crop, Folder, Grid, List, Picture, Refresh, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import FileGallery from '@/components/FileGallery.vue'
 import ImageCropDialog from '@/components/ImageCropDialog.vue'
 import ImagePreviewDialog from '@/components/ImagePreviewDialog.vue'
 import SidebarTree from '@/components/SidebarTree.vue'
@@ -30,11 +31,22 @@ const previewVisible = ref(false)
 const previewTarget = ref<FileNode | null>(null)
 
 const SIDEBAR_STORAGE_KEY = 'cdn-site-sidebar-visible'
+const FILE_VIEW_STORAGE_KEY = 'cdn-site-file-view'
+
+type FileViewMode = 'list' | 'grid'
+
 /** 默认隐藏侧栏，点击左上角按钮展开 */
 const sidebarVisible = ref(localStorage.getItem(SIDEBAR_STORAGE_KEY) === '1')
+const fileViewMode = ref<FileViewMode>(
+  localStorage.getItem(FILE_VIEW_STORAGE_KEY) === 'grid' ? 'grid' : 'list',
+)
 
 watch(sidebarVisible, (visible) => {
   localStorage.setItem(SIDEBAR_STORAGE_KEY, visible ? '1' : '0')
+})
+
+watch(fileViewMode, (mode) => {
+  localStorage.setItem(FILE_VIEW_STORAGE_KEY, mode)
 })
 
 function toggleSidebar() {
@@ -77,11 +89,11 @@ function openImagePreview(file: FileNode) {
   previewVisible.value = true
 }
 
-function tryOpenPreviewFromRow(row: { type: string, path: string, ext?: string }) {
-  if (row.type !== 'file' || !isImage(row as FileNode))
+function handleRowDblClick(row: TableRow) {
+  if (row.type !== 'file')
     return
   const file = findFileByPath(row.path)
-  if (file)
+  if (file && isImage(file))
     openImagePreview(file)
 }
 
@@ -222,6 +234,19 @@ function isImage(row: FileNode) {
   return row.type === 'file' && (isRasterImage(row.ext) || row.ext === 'svg')
 }
 
+function filePreviewUrl(file: FileNode): string {
+  return siteConfig.isLocalManage ? localPreviewUrl(file.path) : cdnPreviewUrl(file.path)
+}
+
+function handleGallerySelect(row: TableRow) {
+  handleRowClick(row)
+}
+
+function handleGalleryPreview(file: FileNode) {
+  if (isImage(file))
+    openImagePreview(file)
+}
+
 onMounted(async () => {
   if (siteConfig.isLocalManage)
     await local.load()
@@ -229,7 +254,9 @@ onMounted(async () => {
     await manifest.load()
 })
 
-watch([selectedFile, fileList], async () => {
+watch([selectedFile, fileList, fileViewMode], async () => {
+  if (fileViewMode.value !== 'list')
+    return
   await nextTick()
   if (!tableRef.value)
     return
@@ -321,10 +348,21 @@ watch([selectedFile, fileList], async () => {
         </ElAside>
 
         <ElMain class="main-panel">
-          <div class="panel-title">
-            {{ listTitle }}
+          <div class="panel-title panel-title--toolbar">
+            <span>{{ listTitle }}</span>
+            <ElRadioGroup v-model="fileViewMode" size="small">
+              <ElRadioButton value="list">
+                <ElIcon><List /></ElIcon>
+                列表
+              </ElRadioButton>
+              <ElRadioButton value="grid">
+                <ElIcon><Grid /></ElIcon>
+                照片墙
+              </ElRadioButton>
+            </ElRadioGroup>
           </div>
           <ElTable
+            v-if="fileViewMode === 'list'"
             ref="tableRef"
             class="file-table"
             :data="fileList"
@@ -332,23 +370,15 @@ watch([selectedFile, fileList], async () => {
             stripe
             highlight-current-row
             @row-click="handleRowClick"
+            @row-dblclick="handleRowDblClick"
           >
             <ElTableColumn label="名称" min-width="180">
               <template #default="{ row }">
                 <ElSpace>
-                  <ElIcon
-                    class="file-icon"
-                    :class="{ 'is-clickable': row.type === 'file' && isImage(row as FileNode) }"
-                    @click.stop="tryOpenPreviewFromRow(row)"
-                  >
+                  <ElIcon class="file-icon">
                     <component :is="row.type === 'directory' ? Folder : Picture" />
                   </ElIcon>
-                  <span
-                    :class="{ 'is-clickable': row.type === 'file' && isImage(row as FileNode) }"
-                    @click.stop="tryOpenPreviewFromRow(row)"
-                  >
-                    {{ row.name }}
-                  </span>
+                  <span>{{ row.name }}</span>
                 </ElSpace>
               </template>
             </ElTableColumn>
@@ -383,6 +413,16 @@ watch([selectedFile, fileList], async () => {
               </template>
             </ElTableColumn>
           </ElTable>
+          <FileGallery
+            v-else
+            :items="fileList"
+            :selected-path="selectedFile?.path"
+            :is-image="isImage"
+            :preview-url="filePreviewUrl"
+            @navigate="handleRowClick"
+            @select="handleGallerySelect"
+            @preview="handleGalleryPreview"
+          />
         </ElMain>
 
         <ElAside width="320px" class="aside-panel detail-aside">
@@ -438,8 +478,8 @@ watch([selectedFile, fileList], async () => {
                 v-if="isImage(selectedFile)"
                 class="preview-box is-clickable"
                 style="margin-top: 12px;"
-                title="点击查看大图"
-                @click="openImagePreview(selectedFile)"
+                title="双击查看大图"
+                @dblclick="openImagePreview(selectedFile)"
               >
                 <ElImage
                   :src="previewSrc"

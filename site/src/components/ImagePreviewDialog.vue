@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FileNode } from '@/utils/validate'
-import { CopyDocument } from '@element-plus/icons-vue'
+import { CopyDocument, Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { localPreviewUrl } from '@/composables/useLocalFiles'
@@ -18,6 +18,8 @@ const emit = defineEmits<{
 
 const previewBranch = ref(siteConfig.cdn.previewBranch)
 const previewHost = ref(siteConfig.cdn.previewHost)
+const imageLoaded = ref(false)
+const imageError = ref(false)
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -32,7 +34,6 @@ const previewUrl = computed(() => {
   return cdnPreviewUrl(props.file.path, previewBranch.value, previewHost.value)
 })
 
-/** 可复制链接：本地模式补全 origin，线上为 CDN 绝对地址 */
 const copyLink = computed(() => {
   if (!previewUrl.value)
     return ''
@@ -57,17 +58,24 @@ watch(() => props.visible, (open) => {
   if (open) {
     previewBranch.value = siteConfig.cdn.previewBranch
     previewHost.value = siteConfig.cdn.previewHost
+    imageLoaded.value = false
+    imageError.value = false
   }
+})
+
+watch(previewUrl, () => {
+  imageLoaded.value = false
+  imageError.value = false
 })
 </script>
 
 <template>
   <ElDialog
     v-model="dialogVisible"
-    width="80%"
-    top="5vh"
+    class="image-preview-dialog"
     destroy-on-close
     append-to-body
+    align-center
   >
     <template #header>
       <div class="preview-header">
@@ -82,7 +90,8 @@ watch(() => props.visible, (open) => {
         </ElButton>
       </div>
     </template>
-    <ElSpace v-if="!siteConfig.isLocalManage" wrap style="margin-bottom: 12px;">
+
+    <ElSpace v-if="!siteConfig.isLocalManage" wrap class="preview-toolbar">
       <ElText type="info">
         CDN
       </ElText>
@@ -105,20 +114,29 @@ watch(() => props.visible, (open) => {
     </ElSpace>
 
     <div class="preview-stage">
-      <ElImage
-        v-if="previewUrl"
+      <div v-if="!imageLoaded && !imageError && previewUrl" class="preview-loading">
+        <ElIcon class="is-loading">
+          <Loading />
+        </ElIcon>
+      </div>
+      <img
+        v-show="imageLoaded && !imageError"
         :src="previewUrl"
         :alt="file?.name"
-        fit="contain"
-        style="width: 100%; max-height: 70vh;"
+        class="preview-img"
+        @load="imageLoaded = true"
+        @error="imageError = true"
       >
-        <template #error>
-          <ElEmpty description="图片加载失败，请检查 CDN 链接或分支" />
-        </template>
-      </ElImage>
+      <ElEmpty v-if="imageError" description="图片加载失败，请检查 CDN 链接或分支" />
     </div>
 
-    <ElText v-if="!siteConfig.isLocalManage" type="info" size="small" tag="p" style="margin-top: 12px; word-break: break-all;">
+    <ElText
+      v-if="!siteConfig.isLocalManage && previewUrl"
+      type="info"
+      size="small"
+      tag="p"
+      class="preview-url"
+    >
       {{ previewUrl }}
     </ElText>
   </ElDialog>
@@ -134,18 +152,63 @@ watch(() => props.visible, (open) => {
 }
 
 .preview-title {
-  font-size: 16px;
-  font-weight: 600;
   overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.preview-toolbar {
+  margin-bottom: 12px;
+}
+
 .preview-stage {
   display: flex;
+  align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-width: 200px;
+  min-height: 120px;
+  max-height: min(72vh, 820px);
+  padding: 12px;
+  overflow: auto;
   background: var(--el-fill-color-lighter);
   border-radius: var(--el-border-radius-base);
+}
+
+.preview-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  color: var(--el-text-color-secondary);
+}
+
+.preview-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 820px);
+  max-height: min(68vh, 780px);
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+.preview-url {
+  margin: 12px 0 0;
+  word-break: break-all;
+}
+</style>
+
+<style>
+.image-preview-dialog.el-dialog {
+  width: auto;
+  max-width: min(92vw, 900px);
+  margin: 0 auto;
+}
+
+.image-preview-dialog .el-dialog__body {
+  padding-top: 8px;
 }
 </style>
