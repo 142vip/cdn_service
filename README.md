@@ -34,15 +34,15 @@ pnpm i
 ## 图床管理界面
 
 ```shell
-pnpm site:dev       # 本地管理 apps/（裁剪、重命名、删除、转 WebP）
-pnpm site:build     # 构建静态站点（GitHub Pages）
-pnpm site:preview   # 预览构建产物
+pnpm dev:site       # 本地管理 apps/（裁剪、重命名、删除、转 WebP）
+pnpm build:site     # 构建静态站点（GitHub Pages）
+pnpm preview:site   # 预览构建产物
 ```
 
 | 模式 | 命令 | 说明 |
 | --- | --- | --- |
-| 本地管理 | `pnpm site:dev` | 读写当前仓库 `apps/`，改完后 git 提交 |
-| CDN 浏览 | `pnpm site:build` + Pages | 只读浏览、复制 CDN 链接 |
+| 本地管理 | `pnpm dev:site` | 读写当前仓库 `apps/`，改完后 git 提交 |
+| CDN 浏览 | `pnpm build:site` + Pages | 只读浏览、复制 CDN 链接 |
 
 **GitHub Pages**
 

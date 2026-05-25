@@ -32,7 +32,7 @@
 
 **场景**：上传了 `wechat-qrcode.png`（1.2MB）
 
-可在 `pnpm site:dev` 界面选中文件后点「转 WebP」，或命令行：
+可在 `pnpm dev:site` 界面选中文件后点「转 WebP」，或命令行：
 
 ```bash
 magick apps/media/wechat/wechat-qrcode.png -quality 85 -strip apps/media/wechat/wechat-qrcode.webp

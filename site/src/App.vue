@@ -290,7 +290,7 @@ watch([selectedFile, fileList], async () => {
           <template v-if="siteConfig.isLocalManage">
             <ElText type="info" tag="p">
               请在仓库根目录执行 <ElText tag="code">
-                pnpm site:dev
+                pnpm dev:site
               </ElText>，并确认存在 <ElText tag="code">
                 apps/
               </ElText> 目录。
