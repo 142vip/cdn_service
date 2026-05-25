@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## v0.0.1-alpha.3 (2026-05-26)
+
+### ✨ Features
+
+- 增加`@142vip/cdn`模块，动态生成资源链接，优化项目结构 &nbsp;-&nbsp; by **chufan** [<samp>(1cf9e)</samp>](https://github.com/142vip/cdn_service/commit/1cf9e33)
+- 将`main-vip`重命名，移除`svg`目录，增加文档说明 &nbsp;-&nbsp; by **chufan** [<samp>(ce87e)</samp>](https://github.com/142vip/cdn_service/commit/ce87e94)
+- 增加照片相关，包含故事、照片墙等功能，实现对图片的可视化管理 &nbsp;-&nbsp; by **chufan** [<samp>(15ac5)</samp>](https://github.com/142vip/cdn_service/commit/15ac509)
+- **vip-admin**:
+  - 初始化项目目录，补充文档 &nbsp;-&nbsp; by **chufan** [<samp>(83bd1)</samp>](https://github.com/142vip/cdn_service/commit/83bd18a)
+- **vip-main**:
+  - 初始化项目目录，统一存储图片 &nbsp;-&nbsp; by **chufan** [<samp>(55975)</samp>](https://github.com/142vip/cdn_service/commit/559756f)
+
+### 📖 Documentation
+
+- 整体更新文档，项目结构清晰，补充说明 &nbsp;-&nbsp; by **chufan** [<samp>(27baf)</samp>](https://github.com/142vip/cdn_service/commit/27bafac)
+
+**Release New Version v0.0.1-alpha.3 [👉 View Changes On GitHub](https://github.com/142vip/cdn_service/compare/v0.0.1-alpha.2...v0.0.1-alpha.3)**
+
 ## v0.0.1-alpha.2 (2026-05-25)
 
 ### ✨ Features
