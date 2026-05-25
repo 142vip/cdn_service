@@ -10,10 +10,6 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: pages-deploy
-  cancel-in-progress: false
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -34,34 +30,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - uses: actions/cache/restore@v4
-        with:
-          path: pages-site
-          key: pages-${{ github.sha }}
-          restore-keys: pages-
-
-      - name: Build & merge
-        env:
-          VITE_BASE_PATH: ${{ github.ref_name == 'main' && '/cdn_service/' || '/cdn_service/next/' }}
+      - name: Build & deploy
         run: |
-          pnpm site:build
-          TARGET="pages-site/cdn_service${{ github.ref_name == 'main' && '' || '/next' }}"
-          mkdir -p "$TARGET"
-          rm -rf "$TARGET"/*
-          cp -r site/dist/* "$TARGET/"
-          [ -f pages-site/index.html ] || printf '%s\n' \
-            '<!DOCTYPE html><html><head><meta charset="UTF-8">' \
-            '<meta http-equiv="refresh" content="0;url=cdn_service/"></head><body></body></html>' \
-            > pages-site/index.html
-
-      - uses: actions/cache/save@v4
-        with:
-          path: pages-site
-          key: pages-${{ github.sha }}
+          pnpm build:site
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: pages-site
+          path: site/dist
 
       - uses: actions/deploy-pages@v4
         id: deployment
