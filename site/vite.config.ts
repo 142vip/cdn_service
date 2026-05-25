@@ -1,5 +1,4 @@
 import path from 'node:path'
-import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -8,12 +7,14 @@ import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import { localAppsPlugin } from './plugins/local-apps'
 import { manifestPlugin } from './plugins/manifest'
+import { siteConfig } from './src/site.config'
 
 const siteDir = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(siteDir, '..')
 
-export default defineConfig({
-  base: process.env.VITE_BASE_PATH ?? '/',
+export default defineConfig(() => ({
+  // 用 /cdn_service/，匹配 GitHub Pages 项目站
+  base: siteConfig.pages.base,
   plugins: [
     vue(),
     localAppsPlugin(repoRoot),
@@ -35,4 +36,4 @@ export default defineConfig({
     fs: { allow: [repoRoot] },
   },
   preview: { port: 7810 },
-})
+}))

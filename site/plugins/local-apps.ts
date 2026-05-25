@@ -3,8 +3,8 @@ import type { Connect, Plugin } from 'vite'
 import { Buffer } from 'node:buffer'
 import fs from 'node:fs'
 import path from 'node:path'
+import { siteConfig } from '../src/site.config'
 import {
-  APPS_DIR,
   buildTreeStats,
   deleteAppsFile,
   getAppsAbsolutePath,
@@ -80,7 +80,11 @@ function createLocalAppsMiddleware(repoRoot: string): Connect.NextHandleFunction
         const tree = scanAppsTree(repoRoot)
         sendJson(res, 200, {
           ok: true,
-          data: { tree, stats: buildTreeStats(tree), appsPath: APPS_DIR },
+          data: {
+            tree,
+            stats: buildTreeStats(tree),
+            appsPath: siteConfig.appsPrefix,
+          },
         })
         return
       }

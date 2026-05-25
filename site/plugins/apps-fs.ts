@@ -1,9 +1,7 @@
 import type { Buffer } from 'node:buffer'
 import fs from 'node:fs'
 import path from 'node:path'
-
-/** apps/ 目录名，所有文件操作均锁定在此目录下 */
-export const APPS_DIR = 'apps'
+import { siteConfig } from '../src/site.config'
 
 export interface ValidationIssue {
   code: string
@@ -20,10 +18,7 @@ export interface FileNode {
   children?: FileNode[]
 }
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024
-const KEBAB_CASE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:jpg|webp|svg)$/
-const CHINESE_REGEX = /[\u4E00-\u9FA5]/
-const ALLOWED = ['jpg', 'webp', 'svg']
+const APPS_DIR = siteConfig.appsPrefix
 
 export function getAppsAbsolutePath(repoRoot: string): string {
   return path.join(repoRoot, APPS_DIR)
@@ -56,13 +51,13 @@ function validateFile(relativePath: string, size: number): ValidationIssue[] {
   const fileName = path.basename(relativePath)
   const ext = path.extname(fileName).slice(1).toLowerCase()
 
-  if (CHINESE_REGEX.test(relativePath))
+  if (siteConfig.chineseRegex.test(relativePath))
     issues.push({ code: 'chinese', message: '路径包含中文' })
-  if (!ALLOWED.includes(ext))
+  if (!siteConfig.allowedExtensions.includes(ext as typeof siteConfig.allowedExtensions[number]))
     issues.push({ code: 'format', message: '仅允许 .jpg / .webp / .svg' })
-  if (!KEBAB_CASE_REGEX.test(fileName) && !CHINESE_REGEX.test(fileName))
+  if (!siteConfig.kebabCaseRegex.test(fileName) && !siteConfig.chineseRegex.test(fileName))
     issues.push({ code: 'naming', message: '需 kebab-case 命名' })
-  if (size > MAX_FILE_SIZE)
+  if (size > siteConfig.maxFileSize)
     issues.push({ code: 'size', message: '超过 2MB' })
 
   return issues
@@ -91,7 +86,7 @@ function buildTree(repoRoot: string, relativePath: string): FileNode {
       name,
       path: relativePath.replace(/\\/g, '/'),
       type: 'directory',
-      issues: CHINESE_REGEX.test(relativePath) ? [{ code: 'chinese', message: '目录名异常' }] : [],
+      issues: siteConfig.chineseRegex.test(relativePath) ? [{ code: 'chinese', message: '目录名异常' }] : [],
       children,
     }
   }
@@ -180,7 +175,7 @@ export function writeAppsFile(repoRoot: string, relativePath: string, buffer: Bu
     throw new Error(issues.map(i => i.message).join('；'))
 
   const absolutePath = resolveAppsAbsolute(repoRoot, relativePath)
-  if (buffer.length > MAX_FILE_SIZE)
+  if (buffer.length > siteConfig.maxFileSize)
     throw new Error('文件大小超过 2MB')
 
   fs.mkdirSync(path.dirname(absolutePath), { recursive: true })

@@ -11,7 +11,7 @@ import SiteFooter from '@/components/SiteFooter.vue'
 import { useFileBrowser } from '@/composables/useFileBrowser'
 import { localPreviewUrl, useLocalFiles } from '@/composables/useLocalFiles'
 import { useManifest } from '@/composables/useManifest'
-import { IS_LOCAL_MANAGE, SIDEBAR_WIDTH, siteConfig } from '@/site.config'
+import { siteConfig } from '@/site.config'
 import { buildCdnLinks, cdnPreviewUrl, copyText } from '@/utils/cdn'
 import { isConvertibleImage, isCropableImage, isRasterImage } from '@/utils/image'
 import { formatSize, formatSizeOrFileCount, getFileSuggestion, issueTagType, suggestRename } from '@/utils/validate'
@@ -42,20 +42,20 @@ function toggleSidebar() {
 }
 
 const isReady = computed(() =>
-  IS_LOCAL_MANAGE
+  siteConfig.isLocalManage
     ? local.ready.value
     : !manifest.loading.value && manifest.tree.value.length > 0,
 )
-const stats = computed(() => IS_LOCAL_MANAGE ? local.stats.value : manifest.stats.value)
+const stats = computed(() => siteConfig.isLocalManage ? local.stats.value : manifest.stats.value)
 const pageSubtitle = computed(() =>
-  IS_LOCAL_MANAGE ? '本地管理 · 当前仓库 apps/' : 'CDN 浏览 · 仅查看链接',
+  siteConfig.isLocalManage ? '本地管理 · 当前仓库 apps/' : 'CDN 浏览 · 仅查看链接',
 )
-const isLoading = computed(() => IS_LOCAL_MANAGE ? local.loading.value : manifest.loading.value)
-const loadError = computed(() => IS_LOCAL_MANAGE ? local.error.value : manifest.error.value)
+const isLoading = computed(() => siteConfig.isLocalManage ? local.loading.value : manifest.loading.value)
+const loadError = computed(() => siteConfig.isLocalManage ? local.error.value : manifest.error.value)
 
 const browser = useFileBrowser(
-  () => IS_LOCAL_MANAGE ? local.tree.value : manifest.tree.value,
-  dir => IS_LOCAL_MANAGE ? local.getDirectoryListing(dir) : manifest.getDirectoryListing(dir),
+  () => siteConfig.isLocalManage ? local.tree.value : manifest.tree.value,
+  dir => siteConfig.isLocalManage ? local.getDirectoryListing(dir) : manifest.getDirectoryListing(dir),
 )
 
 const {
@@ -95,13 +95,13 @@ const previewSrc = computed(() => {
   const file = selectedFile.value
   if (!file || file.type !== 'file')
     return ''
-  return IS_LOCAL_MANAGE ? localPreviewUrl(file.path) : cdnPreviewUrl(file.path)
+  return siteConfig.isLocalManage ? localPreviewUrl(file.path) : cdnPreviewUrl(file.path)
 })
 
 const cropImageUrl = computed(() => {
   if (!cropTarget.value)
     return ''
-  return IS_LOCAL_MANAGE ? localPreviewUrl(cropTarget.value.path) : cdnPreviewUrl(cropTarget.value.path)
+  return siteConfig.isLocalManage ? localPreviewUrl(cropTarget.value.path) : cdnPreviewUrl(cropTarget.value.path)
 })
 
 const cropExistingNames = computed(() => {
@@ -119,7 +119,7 @@ function openRename(row: FileNode) {
 }
 
 async function confirmRename() {
-  if (!renameTarget.value || !IS_LOCAL_MANAGE)
+  if (!renameTarget.value || !siteConfig.isLocalManage)
     return
   try {
     await local.renameFile(renameTarget.value.path, renameValue.value)
@@ -136,7 +136,7 @@ async function confirmRename() {
 }
 
 async function handleDelete(row: FileNode) {
-  if (!IS_LOCAL_MANAGE)
+  if (!siteConfig.isLocalManage)
     return
   try {
     await ElMessageBox.confirm(
@@ -181,7 +181,7 @@ async function handleCropSaved(payload: {
 }
 
 async function handleConvertWebp(row: FileNode) {
-  if (!IS_LOCAL_MANAGE)
+  if (!siteConfig.isLocalManage)
     return
   try {
     const result = await local.convertToWebpFile(row.path)
@@ -204,7 +204,7 @@ async function handleCopy(url: string) {
 }
 
 async function handleRefresh() {
-  if (IS_LOCAL_MANAGE)
+  if (siteConfig.isLocalManage)
     await local.refresh()
   else
     await manifest.load()
@@ -223,7 +223,7 @@ function isImage(row: FileNode) {
 }
 
 onMounted(async () => {
-  if (IS_LOCAL_MANAGE)
+  if (siteConfig.isLocalManage)
     await local.load()
   else
     await manifest.load()
@@ -287,7 +287,7 @@ watch([selectedFile, fileList], async () => {
       <!-- 加载 / 错误 -->
       <div v-if="loadError" v-loading="isLoading && !loadError" class="app-state">
         <ElEmpty :description="loadError">
-          <template v-if="IS_LOCAL_MANAGE">
+          <template v-if="siteConfig.isLocalManage">
             <ElText type="info" tag="p">
               请在仓库根目录执行 <ElText tag="code">
                 pnpm site:dev
@@ -307,7 +307,7 @@ watch([selectedFile, fileList], async () => {
       <!-- 主界面 -->
       <ElContainer v-else-if="isReady" class="app-body">
         <ElAside
-          :width="sidebarVisible ? `${SIDEBAR_WIDTH}px` : '0px'"
+          :width="sidebarVisible ? `${siteConfig.sidebarWidth}px` : '0px'"
           class="aside-panel sidebar-aside"
           :class="{ 'is-collapsed': !sidebarVisible }"
         >
@@ -375,7 +375,7 @@ watch([selectedFile, fileList], async () => {
                 </ElSpace>
               </template>
             </ElTableColumn>
-            <ElTableColumn v-if="IS_LOCAL_MANAGE" label="建议" min-width="180" show-overflow-tooltip>
+            <ElTableColumn v-if="siteConfig.isLocalManage" label="建议" min-width="180" show-overflow-tooltip>
               <template #default="{ row }">
                 <ElText :type="row.issues.length ? 'warning' : 'info'" size="small">
                   {{ getFileSuggestion(row) }}
@@ -423,7 +423,7 @@ watch([selectedFile, fileList], async () => {
                     </li>
                   </ul>
                   <ElButton
-                    v-if="IS_LOCAL_MANAGE"
+                    v-if="siteConfig.isLocalManage"
                     size="small"
                     type="warning"
                     style="margin-top: 8px;"
@@ -449,7 +449,7 @@ watch([selectedFile, fileList], async () => {
                 />
               </div>
 
-              <ElSpace v-if="IS_LOCAL_MANAGE && selectedFile.type === 'file'" wrap style="margin-top: 12px;">
+              <ElSpace v-if="siteConfig.isLocalManage && selectedFile.type === 'file'" wrap style="margin-top: 12px;">
                 <ElButton v-if="canCrop(selectedFile)" size="small" type="primary" :icon="Crop" @click="openCrop(selectedFile)">
                   裁剪
                 </ElButton>
@@ -485,7 +485,7 @@ watch([selectedFile, fileList], async () => {
                   </template>
                 </ElInput>
               </ElSpace>
-              <ElText v-if="IS_LOCAL_MANAGE" type="info" size="small" tag="p" style="margin-top: 8px;">
+              <ElText v-if="siteConfig.isLocalManage" type="info" size="small" tag="p" style="margin-top: 8px;">
                 链接在 git push 后生效
               </ElText>
             </div>
