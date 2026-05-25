@@ -26,9 +26,14 @@
     "clean:hooks": "npx fa clean --git-hooks --all --ignore-tips",
     "lint": "npx fa lint",
     "lint:fix": "npx fa lint --fix",
-    "release": "npx fa release --vip",
+    "release:check": "npx fa release --check-release --vip -F './packages/**'",
+    "release": "pnpm clean:hooks && npx fa release --vip -F './packages/**'",
     "dev:site": "pnpm -C site exec vite",
     "build:site": "pnpm -C site exec vue-tsc --noEmit && pnpm -C site exec vite build",
+    "sync:cdn": "tsx scripts/sync-media.ts",
+    "build:cdn": "pnpm sync:cdn && pnpm -C packages/cdn exec tsup",
+    "prepublish:cdn": "pnpm build:cdn && pnpm --filter @142vip/cdn publish --dry-run --no-git-checks",
+    "publish:cdn": "pnpm build:cdn && pnpm --filter @142vip/cdn publish --no-git-checks",
     "preview:site": "pnpm -C site exec vite preview"
   },
   "devDependencies": {
@@ -41,6 +46,8 @@
     "only-allow": "1.2.1",
     "simple-git-hooks": "2.13.0",
     "ts-node": "10.9.2",
+    "tsup": "8.5.0",
+    "tsx": "4.20.3",
     "typescript": "5.8.3"
   },
   "publishConfig": {

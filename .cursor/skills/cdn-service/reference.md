@@ -10,6 +10,19 @@
 | `media` | 自媒体（注意历史目录 ` media` 含前导空格） |
 | `vip-amin` | VIP 管理端（预留） |
 
+## npm 包 @142vip/cdn
+
+路径：`packages/cdn/`，脚本：`scripts/sync-media.ts`
+
+```bash
+pnpm sync:cdn        # 同步 apps/media → MEDIA_SRC
+pnpm build:cdn       # 构建 ESM/CJS
+pnpm prepublish:cdn  # dry-run 预发布
+pnpm publish:cdn     # 发布 npm
+```
+
+配置：`packages/cdn/src/config.ts`（与 site 逻辑一致，独立维护）
+
 ## 配置入口
 
 **唯一配置文件**：`site/src/site.config.ts`

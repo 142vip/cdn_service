@@ -76,6 +76,10 @@ pnpm i
 pnpm dev:site
 pnpm build:site
 pnpm preview:site
+pnpm sync:cdn
+pnpm build:cdn
+pnpm prepublish:cdn
+pnpm publish:cdn
 pnpm lint:fix
 ```
 
@@ -88,4 +92,3 @@ pnpm lint:fix
 ## 附加资源
 
 - [reference.md](reference.md) — 规范细节、README 模板
-- [examples.md](examples.md) — 操作示例

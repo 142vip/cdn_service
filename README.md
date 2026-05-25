@@ -7,6 +7,7 @@
 ```
 cdn_service/
 ├── apps/                    # 图床资源（按项目分目录，主要工作区）
+├── packages/cdn/            # @142vip/cdn npm 包（media 资源 + CDN 工具）
 ├── site/                    # 图床管理界面（pnpm workspace 子包）
 │   ├── plugins/             # Vite 插件：apps-fs、local-apps、manifest
 │   ├── src/
@@ -20,7 +21,9 @@ cdn_service/
 │   │   └── utils/
 │   ├── vite.config.ts
 │   └── package.json         # 仅声明依赖，脚本在根目录
-├── scripts/core/            # git hooks（commit-msg 校验）
+├── scripts/
+│   ├── sync-media.ts        # 同步 media、生成 MEDIA_SRC
+│   └── core/verify-commit.ts
 ├── pnpm-workspace.yaml      # workspace 仅含 site，排除 apps/
 └── package.json             # 根脚本与工具链
 ```
@@ -36,6 +39,7 @@ pnpm i
 ```shell
 pnpm dev:site       # 本地管理 apps/（裁剪、重命名、删除、转 WebP）
 pnpm build:site     # 构建静态站点（GitHub Pages）
+pnpm build:cdn      # 构建 @142vip/cdn npm 包
 pnpm preview:site   # 预览构建产物
 ```
 
@@ -66,7 +70,22 @@ https://cdn.statically.io/gh/142vip/cdn_service@main/apps/main-vip/svg/github.sv
 | 生产 | `main` | 线上稳定引用 |
 | 开发 | `next` | 日常开发调试 |
 
-默认 CDN 域名：`cdn.statically.io`。可在 `site/src/site.config.ts` 的 `cdn` 字段调整。
+默认 CDN 域名：`cdn.statically.io`。可在 `site/src/site.config.ts` 或 `packages/cdn/src/config.ts` 调整。
+
+## @142vip/cdn
+
+供其他项目使用的 npm 包。**前端优先 `import` 包内资源；外链场景用 `getProductionCdnUrl`。**
+
+```bash
+pnpm sync:cdn · build:cdn · prepublish:cdn · publish:cdn
+```
+
+```ts
+import { getProductionCdnUrl } from '@142vip/cdn'
+import wechatCode from '@142vip/cdn/media/wechat/chu-fan-code.jpg'
+```
+
+详见 [packages/cdn/README.md](packages/cdn/README.md)。
 
 ## 图片规范
 
@@ -84,10 +103,8 @@ pnpm lint:fix       # ESLint
 pnpm release        # 版本发布
 ```
 
-## 参考
-
-- Skill 文档：`.cursor/skills/cdn-service/`
-
 ## 证书
 
-MIT © 2019-present 142vip 储凡
+[MIT](https://opensource.org/license/MIT)
+
+Copyright (c) 2019-present, 142vip 储凡
