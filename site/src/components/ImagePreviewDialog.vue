@@ -4,7 +4,7 @@ import { CopyDocument } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { localPreviewUrl } from '@/composables/useLocalFiles'
-import { CDN_BRANCHES, CDN_DOMAINS, CDN_PREVIEW_BRANCH, CDN_PREVIEW_HOST, IS_LOCAL_MANAGE } from '@/site.config'
+import { siteConfig } from '@/site.config'
 import { cdnPreviewUrl, copyText } from '@/utils/cdn'
 
 const props = defineProps<{
@@ -16,8 +16,8 @@ const emit = defineEmits<{
   'update:visible': [value: boolean]
 }>()
 
-const previewBranch = ref(CDN_PREVIEW_BRANCH)
-const previewHost = ref(CDN_PREVIEW_HOST)
+const previewBranch = ref(siteConfig.cdn.previewBranch)
+const previewHost = ref(siteConfig.cdn.previewHost)
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -27,7 +27,7 @@ const dialogVisible = computed({
 const previewUrl = computed(() => {
   if (!props.file || props.file.type !== 'file')
     return ''
-  if (IS_LOCAL_MANAGE)
+  if (siteConfig.isLocalManage)
     return localPreviewUrl(props.file.path)
   return cdnPreviewUrl(props.file.path, previewBranch.value, previewHost.value)
 })
@@ -55,8 +55,8 @@ async function handleCopyLink() {
 
 watch(() => props.visible, (open) => {
   if (open) {
-    previewBranch.value = CDN_PREVIEW_BRANCH
-    previewHost.value = CDN_PREVIEW_HOST
+    previewBranch.value = siteConfig.cdn.previewBranch
+    previewHost.value = siteConfig.cdn.previewHost
   }
 })
 </script>
@@ -82,13 +82,13 @@ watch(() => props.visible, (open) => {
         </ElButton>
       </div>
     </template>
-    <ElSpace v-if="!IS_LOCAL_MANAGE" wrap style="margin-bottom: 12px;">
+    <ElSpace v-if="!siteConfig.isLocalManage" wrap style="margin-bottom: 12px;">
       <ElText type="info">
         CDN
       </ElText>
       <ElSelect v-model="previewHost" size="small" style="width: 160px;">
         <ElOption
-          v-for="domain in CDN_DOMAINS"
+          v-for="domain in siteConfig.cdn.domains"
           :key="domain.host"
           :label="domain.label"
           :value="domain.host"
@@ -98,7 +98,7 @@ watch(() => props.visible, (open) => {
         分支
       </ElText>
       <ElRadioGroup v-model="previewBranch" size="small">
-        <ElRadioButton v-for="branch in CDN_BRANCHES" :key="branch" :value="branch">
+        <ElRadioButton v-for="branch in siteConfig.cdn.branches" :key="branch" :value="branch">
           {{ branch }}
         </ElRadioButton>
       </ElRadioGroup>
@@ -118,7 +118,7 @@ watch(() => props.visible, (open) => {
       </ElImage>
     </div>
 
-    <ElText v-if="!IS_LOCAL_MANAGE" type="info" size="small" tag="p" style="margin-top: 12px; word-break: break-all;">
+    <ElText v-if="!siteConfig.isLocalManage" type="info" size="small" tag="p" style="margin-top: 12px; word-break: break-all;">
       {{ previewUrl }}
     </ElText>
   </ElDialog>

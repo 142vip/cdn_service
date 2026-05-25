@@ -1,4 +1,5 @@
-export const MAX_FILE_SIZE = 2 * 1024 * 1024
+import { siteConfig } from '@/site.config'
+
 const DEFAULT_QUALITY = 0.85
 const MIN_QUALITY = 0.55
 
@@ -66,7 +67,7 @@ export async function compressCanvas(
   source: HTMLCanvasElement,
   options: CompressOptions,
 ): Promise<CompressResult> {
-  const maxSize = options.maxSize ?? MAX_FILE_SIZE
+  const maxSize = options.maxSize ?? siteConfig.maxFileSize
   const maxDimension = options.maxDimension ?? 4096
   let quality = options.quality ?? DEFAULT_QUALITY
 

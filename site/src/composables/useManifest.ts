@@ -21,7 +21,7 @@ export function useManifest() {
     try {
       const res = await fetch(`${import.meta.env.BASE_URL}manifest.json`)
       if (!res.ok)
-        throw new Error('manifest.json 不存在，请先执行 pnpm site:build')
+        throw new Error('manifest.json 不存在，请先执行 pnpm build:site')
       const data = (await res.json()) as ManifestData
       tree.value = data.tree
       stats.value = data.stats

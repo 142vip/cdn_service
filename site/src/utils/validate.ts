@@ -1,10 +1,6 @@
+import type { AllowedExtension } from '@/site.config'
 import { pinyin } from 'pinyin-pro'
-import {
-  ALLOWED_EXTENSIONS,
-  CHINESE_REGEX,
-  KEBAB_CASE_REGEX,
-  MAX_FILE_SIZE,
-} from '@/site.config'
+import { siteConfig } from '@/site.config'
 
 export interface ValidationIssue {
   code: 'chinese' | 'naming' | 'format' | 'size'
@@ -43,19 +39,19 @@ export function validateFile(relativePath: string, size: number): ValidationIssu
   const fileName = relativePath.split('/').pop() ?? relativePath
   const ext = getExtension(fileName)
 
-  if (CHINESE_REGEX.test(relativePath)) {
+  if (siteConfig.chineseRegex.test(relativePath)) {
     issues.push({ code: 'chinese', message: '路径包含中文' })
   }
 
-  if (!ALLOWED_EXTENSIONS.includes(ext as typeof ALLOWED_EXTENSIONS[number])) {
+  if (!siteConfig.allowedExtensions.includes(ext as AllowedExtension)) {
     issues.push({ code: 'format', message: '仅允许 .jpg / .webp / .svg' })
   }
 
-  if (!KEBAB_CASE_REGEX.test(fileName) && !CHINESE_REGEX.test(fileName)) {
+  if (!siteConfig.kebabCaseRegex.test(fileName) && !siteConfig.chineseRegex.test(fileName)) {
     issues.push({ code: 'naming', message: '需 kebab-case 命名' })
   }
 
-  if (size > MAX_FILE_SIZE) {
+  if (size > siteConfig.maxFileSize) {
     issues.push({ code: 'size', message: `超过 2MB（${formatSize(size)}）` })
   }
 
@@ -86,7 +82,7 @@ function toKebabBase(raw: string): string {
 function preserveRenameExtension(ext: string): string {
   if (ext === 'jpeg')
     return 'jpg'
-  if (ALLOWED_EXTENSIONS.includes(ext as typeof ALLOWED_EXTENSIONS[number]))
+  if (siteConfig.allowedExtensions.includes(ext as AllowedExtension))
     return ext
   return ext || 'jpg'
 }
@@ -97,9 +93,9 @@ export function suggestRename(fileName: string): RenameSuggestion {
   const ext = dotIndex >= 0 ? getExtension(fileName) : ''
   const base = dotIndex >= 0 ? fileName.slice(0, dotIndex) : fileName
 
-  if (CHINESE_REGEX.test(fileName))
+  if (siteConfig.chineseRegex.test(fileName))
     reasons.push('中文转为拼音')
-  if (ext && !ALLOWED_EXTENSIONS.includes(ext as typeof ALLOWED_EXTENSIONS[number]))
+  if (ext && !siteConfig.allowedExtensions.includes(ext as AllowedExtension))
     reasons.push(`格式 .${ext} 不符合规范，请使用转 WebP 或裁剪另存`)
   if (fileName.includes('_') || /\s/.test(fileName))
     reasons.push('空格/下划线转为中划线')

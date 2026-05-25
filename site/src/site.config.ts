@@ -1,15 +1,13 @@
-import logoUrl from '@/assets/logo.svg'
-
 export interface CdnDomainConfig {
   label: string
   host: string
 }
 
-/** 站点统一配置（CDN、规范、页脚等） */
+/** 站点统一配置 */
 export const siteConfig = {
   title: '142vip CDN 图床',
   homeUrl: 'https://142vip.cn',
-  logo: logoUrl,
+  logo: new URL('./assets/logo.svg', import.meta.url).href,
   footer: {
     icp: '鄂ICP备17025193号-1',
     icpUrl: 'https://beian.miit.gov.cn/',
@@ -17,12 +15,19 @@ export const siteConfig = {
   },
   baiduAnalyticsId: '18154807',
 
+  isLocalManage: import.meta.env?.DEV ?? false,
+
   appsPrefix: 'apps',
   maxFileSize: 2 * 1024 * 1024,
   allowedExtensions: ['jpg', 'webp', 'svg'] as const,
   kebabCaseRegex: /^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:jpg|webp|svg)$/,
   chineseRegex: /[\u4E00-\u9FA5]/,
   sidebarWidth: 300,
+
+  pages: {
+    base: '/cdn_service/',
+    url: 'https://142vip.github.io/cdn_service/',
+  },
 
   cdn: {
     repoOwner: '142vip',
@@ -38,18 +43,4 @@ export const siteConfig = {
   },
 } as const
 
-export const IS_LOCAL_MANAGE = import.meta.env.DEV
-
-export const APPS_PREFIX = siteConfig.appsPrefix
-export const MAX_FILE_SIZE = siteConfig.maxFileSize
-export const ALLOWED_EXTENSIONS = siteConfig.allowedExtensions
-export const KEBAB_CASE_REGEX = siteConfig.kebabCaseRegex
-export const CHINESE_REGEX = siteConfig.chineseRegex
-export const SIDEBAR_WIDTH = siteConfig.sidebarWidth
-
-export const REPO_OWNER = siteConfig.cdn.repoOwner
-export const REPO_NAME = siteConfig.cdn.repoName
-export const CDN_DOMAINS = siteConfig.cdn.domains
-export const CDN_BRANCHES = siteConfig.cdn.branches
-export const CDN_PREVIEW_HOST = siteConfig.cdn.previewHost
-export const CDN_PREVIEW_BRANCH = siteConfig.cdn.previewBranch
+export type AllowedExtension = typeof siteConfig.allowedExtensions[number]
