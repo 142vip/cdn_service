@@ -78,7 +78,15 @@ function handleDblClick(row: TableRow) {
       </div>
 
       <ElTag
-        v-if="row.issues.length > 0"
+        v-if="row.type === 'file' && isImage(row as FileNode) && row.issues.length === 0"
+        class="photo-wall__badge"
+        type="success"
+        size="small"
+      >
+        合规
+      </ElTag>
+      <ElTag
+        v-else-if="row.issues.length > 0"
         class="photo-wall__badge"
         :type="row.issues.some(i => i.code === 'chinese' || i.code === 'size') ? 'danger' : 'warning'"
         size="small"

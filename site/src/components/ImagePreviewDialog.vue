@@ -3,9 +3,10 @@ import type { FileNode } from '@/utils/validate'
 import { CopyDocument, Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
+import CdnSourcePicker from '@/components/CdnSourcePicker.vue'
 import { localPreviewUrl } from '@/composables/useLocalFiles'
 import { siteConfig } from '@/site.config'
-import { cdnPreviewUrl, copyText } from '@/utils/cdn'
+import { cdnPreviewUrl, copyText, getDefaultCdnBranch, getDefaultCdnHost } from '@/utils/cdn'
 
 const props = defineProps<{
   visible: boolean
@@ -16,8 +17,8 @@ const emit = defineEmits<{
   'update:visible': [value: boolean]
 }>()
 
-const previewBranch = ref(siteConfig.cdn.previewBranch)
-const previewHost = ref(siteConfig.cdn.previewHost)
+const previewBranch = ref(getDefaultCdnBranch())
+const previewHost = ref(getDefaultCdnHost())
 const imageLoaded = ref(false)
 const imageError = ref(false)
 
@@ -56,8 +57,8 @@ async function handleCopyLink() {
 
 watch(() => props.visible, (open) => {
   if (open) {
-    previewBranch.value = siteConfig.cdn.previewBranch
-    previewHost.value = siteConfig.cdn.previewHost
+    previewBranch.value = getDefaultCdnBranch()
+    previewHost.value = getDefaultCdnHost()
     imageLoaded.value = false
     imageError.value = false
   }
@@ -91,27 +92,12 @@ watch(previewUrl, () => {
       </div>
     </template>
 
-    <ElSpace v-if="!siteConfig.isLocalManage" wrap class="preview-toolbar">
-      <ElText type="info">
-        CDN
-      </ElText>
-      <ElSelect v-model="previewHost" size="small" style="width: 160px;">
-        <ElOption
-          v-for="domain in siteConfig.cdn.domains"
-          :key="domain.host"
-          :label="domain.label"
-          :value="domain.host"
-        />
-      </ElSelect>
-      <ElText type="info">
-        分支
-      </ElText>
-      <ElRadioGroup v-model="previewBranch" size="small">
-        <ElRadioButton v-for="branch in siteConfig.cdn.branches" :key="branch" :value="branch">
-          {{ branch }}
-        </ElRadioButton>
-      </ElRadioGroup>
-    </ElSpace>
+    <CdnSourcePicker
+      v-if="!siteConfig.isLocalManage"
+      v-model:branch="previewBranch"
+      v-model:host="previewHost"
+      class="preview-toolbar"
+    />
 
     <div class="preview-stage">
       <div v-if="!imageLoaded && !imageError && previewUrl" class="preview-loading">
@@ -127,7 +113,7 @@ watch(previewUrl, () => {
         @load="imageLoaded = true"
         @error="imageError = true"
       >
-      <ElEmpty v-if="imageError" description="图片加载失败，请检查 CDN 链接或分支" />
+      <ElEmpty v-if="imageError" description="图片加载失败，请检查 CDN 链接" />
     </div>
 
     <ElText
@@ -192,7 +178,6 @@ watch(previewUrl, () => {
   max-width: min(100%, 820px);
   max-height: min(68vh, 780px);
   object-fit: contain;
-  image-rendering: auto;
 }
 
 .preview-url {

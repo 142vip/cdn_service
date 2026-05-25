@@ -4,6 +4,7 @@ import type { FileNode, TableRow } from '@/utils/validate'
 import { Crop, Folder, Grid, List, Picture, Refresh, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import CdnEnvLinks from '@/components/CdnEnvLinks.vue'
 import FileGallery from '@/components/FileGallery.vue'
 import ImageCropDialog from '@/components/ImageCropDialog.vue'
 import ImagePreviewDialog from '@/components/ImagePreviewDialog.vue'
@@ -13,9 +14,9 @@ import { useFileBrowser } from '@/composables/useFileBrowser'
 import { localPreviewUrl, useLocalFiles } from '@/composables/useLocalFiles'
 import { useManifest } from '@/composables/useManifest'
 import { siteConfig } from '@/site.config'
-import { buildCdnLinks, cdnPreviewUrl, copyText } from '@/utils/cdn'
+import { cdnPreviewUrl } from '@/utils/cdn'
 import { isConvertibleImage, isCropableImage, isRasterImage } from '@/utils/image'
-import { formatSize, formatSizeOrFileCount, getFileSuggestion, issueTagType, suggestRename } from '@/utils/validate'
+import { formatSize, formatSizeOrFileCount, getFileSuggestion, suggestRename } from '@/utils/validate'
 
 const local = useLocalFiles()
 const manifest = useManifest()
@@ -96,12 +97,6 @@ function handleRowDblClick(row: TableRow) {
   if (file && isImage(file))
     openImagePreview(file)
 }
-
-const cdnLinks = computed(() => {
-  if (!selectedFile.value || selectedFile.value.type !== 'file')
-    return []
-  return buildCdnLinks(selectedFile.value.path)
-})
 
 const previewSrc = computed(() => {
   const file = selectedFile.value
@@ -205,16 +200,6 @@ async function handleConvertWebp(row: FileNode) {
   }
 }
 
-async function handleCopy(url: string) {
-  try {
-    await copyText(url)
-    ElMessage.success('链接已复制')
-  }
-  catch {
-    ElMessage.error('复制失败')
-  }
-}
-
 async function handleRefresh() {
   if (siteConfig.isLocalManage)
     await local.refresh()
@@ -245,6 +230,13 @@ function handleGallerySelect(row: TableRow) {
 function handleGalleryPreview(file: FileNode) {
   if (isImage(file))
     openImagePreview(file)
+}
+
+function fileRowClassName({ row }: { row: TableRow }) {
+  if (row.issues.length === 0)
+    return row.type === 'file' ? 'file-row--ok' : ''
+  const severe = row.issues.some(i => i.code === 'chinese' || i.code === 'size')
+  return severe ? 'file-row--danger' : 'file-row--warn'
 }
 
 onMounted(async () => {
@@ -369,6 +361,7 @@ watch([selectedFile, fileList, fileViewMode], async () => {
             row-key="path"
             stripe
             highlight-current-row
+            :row-class-name="fileRowClassName"
             @row-click="handleRowClick"
             @row-dblclick="handleRowDblClick"
           >
@@ -391,18 +384,6 @@ watch([selectedFile, fileList, fileViewMode], async () => {
             <ElTableColumn label="大小" width="108">
               <template #default="{ row }">
                 {{ formatSizeOrFileCount(row) }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn label="合规" min-width="160">
-              <template #default="{ row }">
-                <ElTag v-if="row.issues.length === 0" type="success" size="small">
-                  合规
-                </ElTag>
-                <ElSpace v-else wrap :size="4">
-                  <ElTag v-for="issue in row.issues" :key="issue.code" :type="issueTagType(issue.code)" size="small">
-                    {{ issue.message }}
-                  </ElTag>
-                </ElSpace>
               </template>
             </ElTableColumn>
             <ElTableColumn v-if="siteConfig.isLocalManage" label="建议" min-width="180" show-overflow-tooltip>
@@ -507,24 +488,7 @@ watch([selectedFile, fileList, fileViewMode], async () => {
               <ElDivider content-position="left">
                 CDN 链接
               </ElDivider>
-              <ElSpace direction="vertical" fill style="width: 100%;">
-                <ElInput
-                  v-for="link in cdnLinks"
-                  :key="link.url"
-                  :model-value="link.url"
-                  readonly
-                  size="small"
-                >
-                  <template #prepend>
-                    {{ link.label }}
-                  </template>
-                  <template #append>
-                    <ElButton @click="handleCopy(link.url)">
-                      复制
-                    </ElButton>
-                  </template>
-                </ElInput>
-              </ElSpace>
+              <CdnEnvLinks v-if="selectedFile.type === 'file'" :file-path="selectedFile.path" />
               <ElText v-if="siteConfig.isLocalManage" type="info" size="small" tag="p" style="margin-top: 8px;">
                 链接在 git push 后生效
               </ElText>

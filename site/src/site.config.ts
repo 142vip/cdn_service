@@ -32,14 +32,14 @@ export const siteConfig = {
   cdn: {
     repoOwner: '142vip',
     repoName: 'cdn_service',
-    branches: ['main', 'next'] as const,
+    defaultHost: 'cdn.statically.io',
+    production: { branch: 'main', label: '生产' },
+    development: { branch: 'next', label: '开发' },
     domains: [
-      { label: 'jsDelivr', host: 'cdn.jsdelivr.net' },
       { label: 'Statically', host: 'cdn.statically.io' },
+      { label: 'jsDelivr', host: 'cdn.jsdelivr.net' },
       { label: 'Fastly', host: 'fastly.jsdelivr.net' },
     ] as const satisfies readonly CdnDomainConfig[],
-    previewHost: 'cdn.jsdelivr.net',
-    previewBranch: 'main',
   },
 } as const
 

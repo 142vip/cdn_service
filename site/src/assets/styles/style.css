@@ -297,6 +297,24 @@ body {
   padding-left: 0 !important;
 }
 
+.file-table :deep(.file-row--ok > td) {
+  background-color: var(--el-color-success-light-9) !important;
+}
+
+.file-table :deep(.file-row--warn > td) {
+  background-color: var(--el-color-warning-light-9) !important;
+}
+
+.file-table :deep(.file-row--danger > td) {
+  background-color: var(--el-color-danger-light-9) !important;
+}
+
+.file-table :deep(.file-row--ok:hover > td),
+.file-table :deep(.file-row--warn:hover > td),
+.file-table :deep(.file-row--danger:hover > td) {
+  filter: brightness(0.98);
+}
+
 @media (max-width: 1100px) {
   .detail-aside {
     display: none;

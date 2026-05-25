@@ -15,7 +15,7 @@
 **唯一配置文件**：`site/src/site.config.ts`
 
 ```typescript
-siteConfig.cdn // repoOwner, repoName, domains, branches, previewHost
+siteConfig.cdn // defaultHost, production, development, domains
 siteConfig.allowedExtensions // jpg | webp | svg
 siteConfig.maxFileSize // 2MB
 siteConfig.footer // 页脚、ICP、百度统计 ID
@@ -36,15 +36,16 @@ siteConfig.footer // 页脚、ICP、百度统计 ID
 校验逻辑：`site/src/utils/validate.ts`
 服务端校验：`site/plugins/apps-fs.ts`
 
-## CDN 域名（默认）
+## CDN 环境
 
-| 域名 | 说明 |
-| --- | --- |
-| `cdn.jsdelivr.net` | 默认预览 |
-| `cdn.statically.io` | 备选 |
-| `fastly.jsdelivr.net` | 备选 |
+| 环境 | 分支 | 用途 |
+| --- | --- | --- |
+| 生产 | `main` | 线上稳定引用 |
+| 开发 | `next` | 日常开发调试 |
 
-分支：`main`（生产）、`next`（预发）
+默认域名：`cdn.statically.io`（Statically）
+
+备选：`cdn.jsdelivr.net`、`fastly.jsdelivr.net`
 
 ## site 架构
 

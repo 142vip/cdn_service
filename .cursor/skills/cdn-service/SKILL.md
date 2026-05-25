@@ -56,7 +56,7 @@ cdn_service/
 https://{host}/gh/142vip/cdn_service@{branch}/apps/{path}
 ```
 
-配置：`site/src/site.config.ts` → `siteConfig.cdn`（domains、branches、previewHost）
+配置：`site/src/site.config.ts` → `siteConfig.cdn`（defaultHost、production、development、domains）
 
 ## 图片工作流
 

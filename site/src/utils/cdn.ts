@@ -1,41 +1,50 @@
 import { siteConfig } from '@/site.config'
 
-export interface CdnLink {
+export type CdnEnv = 'production' | 'development'
+
+export interface CdnEnvSection {
+  key: CdnEnv
   label: string
   branch: string
-  url: string
+  hint: string
 }
 
-/** 构建单条 CDN 资源 URL */
-export function buildCdnUrl(
-  filePath: string,
-  host: string,
-  branch: string = siteConfig.cdn.previewBranch,
-): string {
+/** CDN 域名列表（新增域名只需改 site.config.ts → cdn.domains） */
+export function getCdnDomains() {
+  return siteConfig.cdn.domains
+}
+
+export function getDefaultCdnHost() {
+  return siteConfig.cdn.defaultHost
+}
+
+/** 预览默认 next 分支 */
+export function getDefaultCdnBranch() {
+  return siteConfig.cdn.development.branch
+}
+
+export function getCdnBranches(): readonly [string, string] {
+  return [siteConfig.cdn.production.branch, siteConfig.cdn.development.branch]
+}
+
+/** 详情面板：生产 / 开发环境（分支固定） */
+export function getCdnEnvSections(): CdnEnvSection[] {
+  const { production, development } = siteConfig.cdn
+  return [
+    { key: 'production', label: production.label, branch: production.branch, hint: '线上稳定引用' },
+    { key: 'development', label: development.label, branch: development.branch, hint: '日常开发调试' },
+  ]
+}
+
+export function buildCdnUrl(filePath: string, host: string, branch: string): string {
   const { repoOwner, repoName } = siteConfig.cdn
   return `https://${host}/gh/${repoOwner}/${repoName}@${branch}/${filePath}`
 }
 
-/** 生成所有域名 × 分支的 CDN 链接（域名在前） */
-export function buildCdnLinks(filePath: string): CdnLink[] {
-  const links: CdnLink[] = []
-  for (const domain of siteConfig.cdn.domains) {
-    for (const branch of siteConfig.cdn.branches) {
-      links.push({
-        label: `${domain.label} (${branch})`,
-        branch,
-        url: buildCdnUrl(filePath, domain.host, branch),
-      })
-    }
-  }
-  return links
-}
-
-/** 线上预览默认 CDN URL */
 export function cdnPreviewUrl(
   filePath: string,
-  branch = siteConfig.cdn.previewBranch,
-  host = siteConfig.cdn.previewHost,
+  branch = getDefaultCdnBranch(),
+  host = getDefaultCdnHost(),
 ): string {
   return buildCdnUrl(filePath, host, branch)
 }
