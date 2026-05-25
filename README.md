@@ -46,7 +46,15 @@ pnpm preview:site   # 预览构建产物
 | 模式 | 命令 | 说明 |
 | --- | --- | --- |
 | 本地管理 | `pnpm dev:site` | 读写当前仓库 `apps/`，改完后 git 提交 |
-| CDN 浏览 | `pnpm build:site` + Pages | 只读浏览、复制 CDN 链接 |
+| CDN 浏览 | `pnpm build:site` + Pages | 只读浏览、复制 CDN 链接；可查看照片墙与 photos.json |
+
+**侧栏视图**（本地与预览模式均可用）
+
+- **图床目录**：浏览 `apps/` 文件树，dev 下可裁剪、重命名、删除
+- **照片故事** → **照片墙**：管理 `apps/vip-main/photos.json`（dev 可编辑，预览只读）
+- **照片故事** → **photos.json**：JSON 只读预览与复制
+
+选择会持久化到浏览器 `localStorage`。
 
 **GitHub Pages**
 

@@ -2,15 +2,15 @@
 
 ## 示例 1：新增项目图片
 
-**场景**：为 `main-vip` 添加一张背景图
+**场景**：为 `vip-main` 添加一张背景图
 
 ```
 1. 准备图片 hero-bg.jpg（850KB，1920x1080）
 2. 校验：kebab-case ✓、jpg ✓、≤2MB ✓、无中文 ✓
-3. 放入 apps/main-vip/hero-bg.jpg
-4. 更新 apps/main-vip/README.md 文件表
+3. 放入 apps/vip-main/daily/hero-bg.jpg
+4. 更新 apps/vip-main/README.md 或对应子目录 README
 5. 在图床管理界面确认 CDN 链接
-6. git commit -m "feat(main-vip): add hero background image"
+6. git commit -m "feat(vip-main): add hero background image"
 ```
 
 ## 示例 2：重命名不合规文件
@@ -47,13 +47,13 @@ git commit -m "refactor(media): convert wechat qrcode to webp"
 
 ## 示例 4：新增 SVG 图标
 
-**场景**：为 `main-vip` 添加 Twitter 图标
+**场景**：为 `vip-main` 添加 Twitter 图标
 
 ```
-1. 创建 apps/main-vip/svg/twitter.svg（≤2MB，纯矢量通常很小）
-2. 更新 apps/main-vip/svg/README.md
+1. 创建 apps/vip-main/svg/twitter.svg（≤2MB，纯矢量通常很小）
+2. 更新 apps/vip-main/svg/README.md
 3. 在图床管理界面确认 CDN 链接
-4. git commit -m "feat(main-vip): add twitter svg icon"
+4. git commit -m "feat(vip-main): add twitter svg icon"
 ```
 
 ## 示例 5：Agent 收到「上传图片」请求
@@ -72,6 +72,21 @@ Agent：
 6. 更新 apps/media/wechat/README.md
 7. 汇报 CDN 链接
 ```
+
+## 示例 7：编辑照片故事
+
+**场景**：为 142vip.cn 照片墙新增一条故事
+
+```
+1. pnpm dev:site
+2. 侧栏选「照片故事」→「照片墙」
+3. 点击「新建故事」，填写标题、描述（10 行）、分类（中文：旅游/运动/做菜/钓鱼/日常）
+4. 从图床选图或填写 apps/vip-main/{folder}/... 路径
+5. 保存后确认 apps/vip-main/photos.json 已更新
+6. git commit -m "feat(vip-main): add photo story for ..."
+```
+
+预览模式（`pnpm preview:site`）下照片墙与 photos.json 均为只读。
 
 ## 示例 6：README 更新片段
 

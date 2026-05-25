@@ -66,7 +66,7 @@ https://{host}/gh/142vip/cdn_service@{branch}/apps/{path}
 - [ ] 放置/更新文件
 - [ ] 更新 README.md
 - [ ] pnpm dev:site 本地确认
-- [ ] commit（scope: 408 | jsc | main-vip | media | site | scripts）
+- [ ] commit（scope: 408 | jsc | vip-main | media | vip-admin | site | scripts）
 ```
 
 ## 常用命令
@@ -86,6 +86,8 @@ pnpm lint:fix
 ## UI 要点（site）
 
 - 点击左上角 Logo/标题：展开/收起左侧目录树（默认隐藏）
+- 侧栏下拉：**图床目录** / **照片故事**（选择持久化 `localStorage`）
+- 照片故事子菜单：**照片墙**（CRUD，dev 可编辑）/ **photos.json**（JSON 预览）
 - 点击文件名/预览图：弹窗预览，右上角可复制链接
 - 右侧详情：CDN 链接、裁剪/重命名/转 WebP/删除（仅 dev）
 

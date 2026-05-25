@@ -6,9 +6,9 @@
 | --- | --- |
 | `408` | 408CSFamily |
 | `jsc` | JavaScriptCollection |
-| `main-vip` | 142vip 主站 |
+| `vip-main` | 142vip 主站（含 `photos.json` 照片墙数据） |
 | `media` | 自媒体（注意历史目录 ` media` 含前导空格） |
-| `vip-amin` | VIP 管理端（预留） |
+| `vip-admin` | VIP 管理端（预留） |
 
 ## npm 包 @142vip/cdn
 
@@ -32,6 +32,8 @@ siteConfig.cdn // defaultHost, production, development, domains
 siteConfig.allowedExtensions // jpg | webp | svg
 siteConfig.maxFileSize // 2MB
 siteConfig.footer // 页脚、ICP、百度统计 ID
+siteConfig.photoStories // photos.json 路径与分类（旅游、运动、做菜、钓鱼、日常）
+siteConfig.hiddenTreeEntries // 目录树隐藏项（如 photos.json）
 ```
 
 修改 CDN 域名或分支后重新 `pnpm build:site` 部署。
@@ -65,12 +67,19 @@ siteConfig.footer // 页脚、ICP、百度统计 ID
 ```
 plugins/apps-fs.ts      扫描树、文件 CRUD、合规校验
 plugins/local-apps.ts   dev：/__local/* API + /apps/* 静态预览
+plugins/photos-json.ts  photos.json 读写与校验
 plugins/manifest.ts     build：写入 src/assets/manifest.json → dist/
 
 composables/
   useLocalFiles.ts      dev 模式 API 客户端
   useManifest.ts        Pages 模式读 manifest
   useFileBrowser.ts     目录树、搜索、选中
+  usePhotoStories.ts    photos.json CRUD（dev）/ manifest 只读（预览）
+
+components/
+  PhotoStoriesPanel.vue 照片墙 CRUD、排序、画廊预览
+  PhotosJsonView.vue    photos.json 只读 JSON 视图
+  StoryImagePreview.vue 全屏图片预览
 
 utils/
   validate.ts           前端校验与命名建议
@@ -78,6 +87,15 @@ utils/
   crop-name.ts          裁剪文件名建议
   convert.ts            压缩、webp 转换
 ```
+
+## 照片故事（photos.json）
+
+- 数据文件：`apps/vip-main/photos.json`（`LifePhotoItem[]`）
+- 分类字段 `category` 使用中文：`旅游` | `运动` | `做菜` | `钓鱼` | `日常`
+- 图片路径：`apps/vip-main/{folder}/...` 或外链 `https://...`
+- dev API：`GET/PUT /__local/photos`；构建时 `manifest.json` 嵌入 `photoStories`
+- 侧栏：下拉选「图床目录 / 照片故事」；照片故事子菜单「照片墙 / photos.json」
+- 持久化键：`cdn-site-sidebar-view`、`cdn-site-stories-sub-view`
 
 ## 部署
 
