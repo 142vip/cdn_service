@@ -40,6 +40,7 @@ const editingId = ref<number | null>(null)
 const formRef = ref<FormInstance>()
 const form = reactive<LifePhotoItem>(createEmptyPhotoStory(1))
 const dragStoryIndex = ref<number | null>(null)
+const dropStoryIndex = ref<number | null>(null)
 const dragImageIndex = ref<number | null>(null)
 const dropImageIndex = ref<number | null>(null)
 const previewVisible = ref(false)
@@ -101,10 +102,6 @@ const selectedStory = computed(() =>
   photoStories.selectedId.value === null
     ? null
     : photoStories.items.value.find(item => item.id === photoStories.selectedId.value) ?? null,
-)
-
-const previewImages = computed(() =>
-  selectedStory.value?.images.map(storyImageUrl) ?? [],
 )
 
 function openPreview(index = 0) {
@@ -243,15 +240,24 @@ function onStoryDragStart(index: number, event: DragEvent) {
   if (!canDragSort.value)
     return
   dragStoryIndex.value = index
+  dropStoryIndex.value = index
   event.dataTransfer?.setData('text/plain', String(index))
   event.dataTransfer!.effectAllowed = 'move'
+  if (event.dataTransfer && event.target instanceof HTMLElement)
+    event.dataTransfer.setDragImage(event.target, 20, 20)
 }
 
-function onStoryDragOver(event: DragEvent) {
+function onStoryDragOver(index: number, event: DragEvent) {
   if (!canDragSort.value)
     return
   event.preventDefault()
+  dropStoryIndex.value = index
   event.dataTransfer!.dropEffect = 'move'
+}
+
+function onStoryDragEnd() {
+  dragStoryIndex.value = null
+  dropStoryIndex.value = null
 }
 
 async function onStoryDrop(targetIndex: number) {
@@ -259,6 +265,7 @@ async function onStoryDrop(targetIndex: number) {
     return
   const fromIndex = dragStoryIndex.value
   dragStoryIndex.value = null
+  dropStoryIndex.value = null
   await persistReorder(fromIndex, targetIndex)
 }
 
@@ -289,9 +296,17 @@ function selectImage(path: string) {
 }
 
 function onImageDragStart(index: number, event: DragEvent) {
+  const target = event.target as HTMLElement
+  if (target.closest('input, textarea, button, .el-input, .el-button, .el-image')) {
+    event.preventDefault()
+    return
+  }
   dragImageIndex.value = index
+  dropImageIndex.value = index
   event.dataTransfer?.setData('text/plain', String(index))
   event.dataTransfer!.effectAllowed = 'move'
+  if (event.dataTransfer && event.currentTarget instanceof HTMLElement)
+    event.dataTransfer.setDragImage(event.currentTarget, 20, 20)
 }
 
 function onImageDragOver(index: number, event: DragEvent) {
@@ -358,26 +373,16 @@ async function submitForm() {
 
 <template>
   <ElContainer direction="vertical" class="photo-stories">
-    <ElHeader height="auto" class="photo-stories__header">
-      <div class="photo-stories__toolbar">
-        <div class="photo-stories__toolbar-main">
-          <ElInput
-            v-model="keyword"
-            clearable
-            placeholder="搜索标题、描述、地点、标签"
-            :prefix-icon="Search"
-            class="photo-stories__search"
-          />
-          <ElRadioGroup v-model="categoryFilter" size="small">
-            <ElRadioButton value="">
-              全部
-            </ElRadioButton>
-            <ElRadioButton v-for="item in categoryOptions" :key="item.value" :value="item.value">
-              {{ item.label }}
-            </ElRadioButton>
-          </ElRadioGroup>
-        </div>
-        <div class="photo-stories__toolbar-actions">
+    <ElHeader height="auto" class="photo-stories__header panel-toolbar">
+      <div class="panel-toolbar__row">
+        <ElInput
+          v-model="keyword"
+          clearable
+          placeholder="搜索标题、描述、地点、标签"
+          :prefix-icon="Search"
+          class="panel-toolbar__search"
+        />
+        <div class="panel-toolbar__actions">
           <ElButton
             v-if="!photoStories.readonly"
             :type="sortMode ? 'primary' : 'default'"
@@ -396,12 +401,32 @@ async function submitForm() {
           </ElButton>
         </div>
       </div>
-      <div class="photo-stories__meta">
+      <div class="filter-pills panel-toolbar__filters">
+        <button
+          type="button"
+          class="filter-pill"
+          :class="{ 'is-active': categoryFilter === '' }"
+          @click="categoryFilter = ''"
+        >
+          全部
+        </button>
+        <button
+          v-for="item in categoryOptions"
+          :key="item.value"
+          type="button"
+          class="filter-pill"
+          :class="{ 'is-active': categoryFilter === item.value }"
+          @click="categoryFilter = item.value"
+        >
+          {{ item.label }}
+        </button>
+      </div>
+      <div class="panel-toolbar__meta">
         <ElText type="info" size="small">
           {{ siteConfig.photoStories.filePath }} · 供 142vip.cn 照片墙展示
         </ElText>
         <ElText v-if="sortMode" type="warning" size="small">
-          拖拽左侧把手调整故事顺序，松手后自动保存
+          拖拽左侧卡片调整故事顺序，松手后自动保存
         </ElText>
       </div>
     </ElHeader>
@@ -421,7 +446,7 @@ async function submitForm() {
           <ElEmpty
             v-if="filteredItems.length === 0"
             :image-size="72"
-            description="暂无照片故事"
+            description="暂无图片故事"
           >
             <ElButton v-if="!photoStories.readonly" type="primary" :icon="Plus" @click="openCreate">
               新增故事
@@ -433,23 +458,19 @@ async function submitForm() {
               <article
                 v-for="(item, index) in listItems"
                 :key="item.id"
-                class="photo-stories__card"
-                :class="{ 'is-active': photoStories.selectedId.value === item.id }"
-                @dragover="onStoryDragOver"
+                class="photo-stories__card photo-stories__card--sortable"
+                :class="{
+                  'is-active': photoStories.selectedId.value === item.id,
+                  'is-dragging': dragStoryIndex === index,
+                  'is-drop-target': dropStoryIndex === index && dragStoryIndex !== index,
+                }"
+                draggable="true"
+                @dragstart="onStoryDragStart(index, $event)"
+                @dragend="onStoryDragEnd"
+                @dragover="onStoryDragOver(index, $event)"
                 @drop="onStoryDrop(index)"
                 @click="photoStories.selectedId.value = item.id"
               >
-                <button
-                  type="button"
-                  class="photo-stories__drag"
-                  draggable="true"
-                  title="拖拽排序"
-                  @click.stop
-                  @dragstart="onStoryDragStart(index, $event)"
-                  @dragend="dragStoryIndex = null"
-                >
-                  <ElIcon><Rank /></ElIcon>
-                </button>
                 <div class="photo-stories__card-body">
                   <ElImage
                     v-if="coverUrl(item)"
@@ -626,7 +647,7 @@ async function submitForm() {
 
     <StoryImagePreview
       v-model:visible="previewVisible"
-      :images="previewImages"
+      :image-paths="selectedStory?.images ?? []"
       :initial-index="previewIndex"
       :title="selectedStory?.title"
     />
@@ -634,7 +655,7 @@ async function submitForm() {
     <ElDrawer
       v-if="!photoStories.readonly"
       v-model="drawerVisible"
-      :title="editingId === null ? '新增照片故事' : '编辑照片故事'"
+      :title="editingId === null ? '新增图片故事' : '编辑图片故事'"
       size="520px"
       destroy-on-close
     >
@@ -693,28 +714,23 @@ async function submitForm() {
         </ElFormItem>
         <ElFormItem label="图片" required>
           <ElText type="info" size="small" tag="p" style="margin: 0 0 8px;">
-            拖拽左侧把手调整图片顺序；建议从对应分类目录选择图片
+            拖拽整行调整图片顺序（输入框内可正常编辑）；建议从对应分类目录选择图片
           </ElText>
           <div class="photo-stories__image-list">
             <div
               v-for="(imagePath, index) in form.images"
               :key="index"
               class="photo-stories__image-row"
-              :class="{ 'is-drop-target': dropImageIndex === index }"
+              :class="{
+                'is-drop-target': dropImageIndex === index,
+                'is-dragging': dragImageIndex === index,
+              }"
+              draggable="true"
+              @dragstart="onImageDragStart(index, $event)"
+              @dragend="dragImageIndex = null; dropImageIndex = null"
               @dragover="onImageDragOver(index, $event)"
               @drop="onImageDrop(index)"
             >
-              <button
-                v-if="!photoStories.readonly"
-                type="button"
-                class="photo-stories__drag"
-                draggable="true"
-                title="拖拽排序"
-                @dragstart="onImageDragStart(index, $event)"
-                @dragend="dragImageIndex = null; dropImageIndex = null"
-              >
-                <ElIcon><Rank /></ElIcon>
-              </button>
               <ElInput v-model="form.images[index]" :placeholder="`apps/vip-main/${categoryOptions.find(item => item.value === form.category)?.folder ?? 'daily'}/example.webp`">
                 <template #append>
                   <ElButton @click="openImagePicker(index)">
@@ -749,14 +765,26 @@ async function submitForm() {
     </ElDrawer>
 
     <ElDialog v-model="pickerVisible" title="从 vip-main 选择图片" width="760px" destroy-on-close>
-      <ElRadioGroup v-model="pickerCategory" size="small" style="margin-bottom: 12px;">
-        <ElRadioButton value="">
+      <div class="filter-pills" style="margin-bottom: 12px;">
+        <button
+          type="button"
+          class="filter-pill"
+          :class="{ 'is-active': pickerCategory === '' }"
+          @click="pickerCategory = ''"
+        >
           全部
-        </ElRadioButton>
-        <ElRadioButton v-for="group in groupedPickerImages" :key="group.value" :value="group.value">
+        </button>
+        <button
+          v-for="group in groupedPickerImages"
+          :key="group.value"
+          type="button"
+          class="filter-pill"
+          :class="{ 'is-active': pickerCategory === group.value }"
+          @click="pickerCategory = group.value"
+        >
           {{ group.label }} ({{ group.paths.length }})
-        </ElRadioButton>
-      </ElRadioGroup>
+        </button>
+      </div>
       <ElEmpty v-if="activePickerImages.length === 0" description="当前分类下暂无可选图片" />
       <ElScrollbar v-else max-height="420px">
         <ElRow :gutter="12">
@@ -780,43 +808,7 @@ async function submitForm() {
 }
 
 .photo-stories__header {
-  padding: 16px 20px 12px;
   height: auto;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-}
-
-.photo-stories__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.photo-stories__toolbar-main {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  min-width: 260px;
-}
-
-.photo-stories__search {
-  width: min(100%, 240px);
-}
-
-.photo-stories__toolbar-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.photo-stories__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
 }
 
 .photo-stories__body {
@@ -856,6 +848,24 @@ async function submitForm() {
 
 .photo-stories__card.is-active {
   border-color: var(--el-color-primary);
+}
+
+.photo-stories__card--sortable {
+  cursor: grab;
+  user-select: none;
+}
+
+.photo-stories__card--sortable:active {
+  cursor: grabbing;
+}
+
+.photo-stories__card.is-dragging {
+  opacity: 0.5;
+}
+
+.photo-stories__card.is-drop-target {
+  border-color: var(--el-color-primary);
+  box-shadow: 0 0 0 1px var(--el-color-primary-light-7);
 }
 
 .photo-stories__card-body {
@@ -903,21 +913,6 @@ async function submitForm() {
   border-radius: 999px;
   background: var(--el-fill-color);
   font-size: 11px;
-}
-
-.photo-stories__drag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  align-self: center;
-  border: none;
-  border-radius: 6px;
-  background: var(--el-fill-color-light);
-  color: var(--el-text-color-secondary);
-  cursor: grab;
 }
 
 .photo-stories__detail {
@@ -1067,13 +1062,19 @@ async function submitForm() {
 
 .photo-stories__image-row {
   display: grid;
-  grid-template-columns: 28px 1fr 44px auto;
+  grid-template-columns: 1fr 44px auto;
   gap: 8px;
   align-items: center;
+  padding: 4px;
+  border-radius: 8px;
+  cursor: grab;
+}
+
+.photo-stories__image-row.is-dragging {
+  opacity: 0.5;
 }
 
 .photo-stories__image-row.is-drop-target {
-  border-radius: 8px;
   background: var(--el-color-primary-light-9);
 }
 </style>

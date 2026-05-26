@@ -73,20 +73,21 @@ Agent：
 7. 汇报 CDN 链接
 ```
 
-## 示例 7：编辑照片故事
+## 示例 7：编辑图片故事
 
 **场景**：为 142vip.cn 照片墙新增一条故事
 
 ```
 1. pnpm dev:site
-2. 侧栏选「照片故事」→「照片墙」
-3. 点击「新建故事」，填写标题、描述（10 行）、分类（中文：旅游/运动/做菜/钓鱼/日常）
+2. 侧栏选「图片故事」
+3. 点击「新增故事」，填写标题、描述、分类（中文：旅游/运动/做菜/钓鱼/日常）
 4. 从图床选图或填写 apps/vip-main/{folder}/... 路径
 5. 保存后确认 apps/vip-main/photos.json 已更新
-6. git commit -m "feat(vip-main): add photo story for ..."
+6. 双击图片集可全屏预览，切换分支/CDN 后复制链接
+7. git commit -m "feat(vip-main): add photo story for ..."
 ```
 
-预览模式（`pnpm preview:site`）下照片墙与 photos.json 均为只读。
+侧栏「JSON文件」可预览/复制 photos.json。预览模式（`pnpm preview:site`）下图片故事与 JSON 均为只读。
 
 ## 示例 6：README 更新片段
 

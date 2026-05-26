@@ -27,6 +27,14 @@ export function getCdnBranches(): readonly [string, string] {
   return [siteConfig.cdn.production.branch, siteConfig.cdn.development.branch]
 }
 
+/** 分支下拉选项（预览工具栏） */
+export function getCdnBranchOptions() {
+  return getCdnEnvSections().map(section => ({
+    value: section.branch,
+    label: `${section.branch} · ${section.label}`,
+  }))
+}
+
 /** 详情面板：生产 / 开发环境（分支固定） */
 export function getCdnEnvSections(): CdnEnvSection[] {
   const { production, development } = siteConfig.cdn

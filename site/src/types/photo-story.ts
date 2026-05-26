@@ -11,6 +11,15 @@ export interface LifePhotoItem {
 }
 
 const REMOTE_IMAGE_PATTERN = /^https?:\/\//i
+
+export function isRemoteStoryImage(path: string): boolean {
+  return REMOTE_IMAGE_PATTERN.test(path)
+}
+
+export function isAppsImagePath(path: string): boolean {
+  return path.startsWith('apps/')
+}
+
 const IMAGE_EXT_PATTERN = /\.(?:jpe?g|webp|png|gif|svg)(?:[?#]|$)/i
 
 /** 解析故事图片地址：外链原样返回，图床路径走 resolver */

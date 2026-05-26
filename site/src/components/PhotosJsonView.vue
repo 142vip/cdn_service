@@ -29,7 +29,7 @@ async function copyJson() {
     <div class="photos-json-view__head">
       <div>
         <ElText tag="h2" class="photos-json-view__title">
-          photos.json
+          JSON文件
         </ElText>
         <ElText type="info" size="small">
           {{ siteConfig.photoStories.filePath }} · 当前 {{ photoStories.items.value.length }} 条故事

@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, Close, Loading } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
+import CdnPreviewBar from '@/components/CdnPreviewBar.vue'
+import { useCdnPreviewState } from '@/composables/useCdnPreviewState'
+import { localPreviewUrl } from '@/composables/useLocalFiles'
+import { siteConfig } from '@/site.config'
+import { isAppsImagePath, isRemoteStoryImage, resolveStoryImageUrl } from '@/types/photo-story'
 
 const props = withDefaults(defineProps<{
   visible: boolean
-  images: string[]
+  imagePaths: string[]
   initialIndex?: number
   title?: string
 }>(), {
@@ -19,15 +24,40 @@ const emit = defineEmits<{
 const currentIndex = ref(0)
 const loading = ref(true)
 const error = ref(false)
+const useLocalFallback = ref(false)
+
+const { branch, host, resetDefaults, buildAppsUrl, copyLink } = useCdnPreviewState()
 
 const dialogVisible = computed({
   get: () => props.visible,
   set: value => emit('update:visible', value),
 })
 
-const currentSrc = computed(() => props.images[currentIndex.value] ?? '')
-const hasMultiple = computed(() => props.images.length > 1)
-const counterText = computed(() => `${currentIndex.value + 1} / ${props.images.length}`)
+const currentPath = computed(() => props.imagePaths[currentIndex.value] ?? '')
+const hasMultiple = computed(() => props.imagePaths.length > 1)
+const counterText = computed(() => `${currentIndex.value + 1} / ${props.imagePaths.length}`)
+const isAppsPath = computed(() => isAppsImagePath(currentPath.value))
+
+const cdnUrl = computed(() => {
+  const path = currentPath.value
+  if (!path)
+    return ''
+  if (isRemoteStoryImage(path))
+    return path
+  if (isAppsPath.value)
+    return buildAppsUrl(path)
+  return resolveStoryImageUrl(path, buildAppsUrl)
+})
+
+const localUrl = computed(() =>
+  isAppsPath.value && siteConfig.isLocalManage ? localPreviewUrl(currentPath.value) : '',
+)
+
+const displaySrc = computed(() => {
+  if (useLocalFallback.value && localUrl.value)
+    return localUrl.value
+  return cdnUrl.value
+})
 
 function close() {
   dialogVisible.value = false
@@ -36,13 +66,13 @@ function close() {
 function goPrev() {
   if (!hasMultiple.value)
     return
-  currentIndex.value = (currentIndex.value - 1 + props.images.length) % props.images.length
+  currentIndex.value = (currentIndex.value - 1 + props.imagePaths.length) % props.imagePaths.length
 }
 
 function goNext() {
   if (!hasMultiple.value)
     return
-  currentIndex.value = (currentIndex.value + 1) % props.images.length
+  currentIndex.value = (currentIndex.value + 1) % props.imagePaths.length
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -56,22 +86,57 @@ function onKeydown(event: KeyboardEvent) {
     goNext()
 }
 
+function resetImageState() {
+  useLocalFallback.value = false
+  loading.value = true
+  error.value = false
+}
+
+function handleImageLoad() {
+  loading.value = false
+  error.value = false
+}
+
+function handleImageError() {
+  if (siteConfig.isLocalManage && localUrl.value && !useLocalFallback.value) {
+    useLocalFallback.value = true
+    loading.value = true
+    return
+  }
+  loading.value = false
+  error.value = true
+}
+
+function handleCopyLink() {
+  copyLink(cdnUrl.value)
+}
+
 watch(() => props.visible, (open) => {
   if (!open)
     return
-  currentIndex.value = Math.min(Math.max(props.initialIndex, 0), Math.max(props.images.length - 1, 0))
-  loading.value = true
-  error.value = false
+  resetDefaults()
+  currentIndex.value = Math.min(
+    Math.max(props.initialIndex, 0),
+    Math.max(props.imagePaths.length - 1, 0),
+  )
+  resetImageState()
 })
 
-watch(currentSrc, () => {
-  loading.value = true
-  error.value = false
+watch(currentPath, () => {
+  resetImageState()
+})
+
+watch([branch, host], () => {
+  resetImageState()
 })
 
 watch(() => props.initialIndex, (index) => {
-  if (dialogVisible.value)
-    currentIndex.value = Math.min(Math.max(index, 0), Math.max(props.images.length - 1, 0))
+  if (dialogVisible.value) {
+    currentIndex.value = Math.min(
+      Math.max(index, 0),
+      Math.max(props.imagePaths.length - 1, 0),
+    )
+  }
 })
 </script>
 
@@ -83,6 +148,7 @@ watch(() => props.initialIndex, (index) => {
         class="story-preview"
         role="dialog"
         aria-modal="true"
+        tabindex="-1"
         @keydown="onKeydown"
       >
         <div class="story-preview__backdrop" @click="close" />
@@ -96,6 +162,17 @@ watch(() => props.initialIndex, (index) => {
             <ElIcon><Close /></ElIcon>
           </button>
         </header>
+
+        <div v-if="currentPath" class="story-preview__toolbar">
+          <CdnPreviewBar
+            v-model:branch="branch"
+            v-model:host="host"
+            :file-path="currentPath"
+            :cdn-url="cdnUrl"
+            theme="dark"
+            @copy="handleCopyLink"
+          />
+        </div>
 
         <div class="story-preview__body">
           <button
@@ -116,12 +193,12 @@ watch(() => props.initialIndex, (index) => {
             </div>
             <img
               v-show="!error"
-              :key="currentSrc"
-              :src="currentSrc"
+              :key="displaySrc"
+              :src="displaySrc"
               :alt="title ? `${title} ${counterText}` : '图片预览'"
               class="story-preview__img"
-              @load="loading = false"
-              @error="loading = false; error = true"
+              @load="handleImageLoad"
+              @error="handleImageError"
             >
             <ElEmpty v-if="error" description="图片加载失败" :image-size="72" />
           </div>
@@ -139,14 +216,18 @@ watch(() => props.initialIndex, (index) => {
 
         <footer v-if="hasMultiple" class="story-preview__thumbs">
           <button
-            v-for="(src, index) in images"
-            :key="`${src}-${index}`"
+            v-for="(path, index) in imagePaths"
+            :key="`${path}-${index}`"
             type="button"
             class="story-preview__thumb"
             :class="{ 'is-active': index === currentIndex }"
             @click="currentIndex = index"
           >
-            <img :src="src" :alt="`缩略图 ${index + 1}`" loading="lazy">
+            <img
+              :src="isAppsImagePath(path) && siteConfig.isLocalManage ? localPreviewUrl(path) : resolveStoryImageUrl(path, buildAppsUrl)"
+              :alt="`缩略图 ${index + 1}`"
+              loading="lazy"
+            >
           </button>
         </footer>
       </div>
@@ -172,6 +253,7 @@ watch(() => props.initialIndex, (index) => {
 }
 
 .story-preview__header,
+.story-preview__toolbar,
 .story-preview__body,
 .story-preview__thumbs {
   position: relative;
@@ -184,6 +266,10 @@ watch(() => props.initialIndex, (index) => {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px 8px;
+}
+
+.story-preview__toolbar {
+  padding: 0 20px 6px;
 }
 
 .story-preview__meta {
@@ -247,7 +333,7 @@ watch(() => props.initialIndex, (index) => {
   align-items: center;
   justify-content: center;
   min-width: 0;
-  max-height: calc(100vh - 160px);
+  max-height: calc(100vh - 220px);
   padding: 8px;
 }
 
@@ -263,7 +349,7 @@ watch(() => props.initialIndex, (index) => {
 .story-preview__img {
   display: block;
   max-width: min(100%, 960px);
-  max-height: calc(100vh - 180px);
+  max-height: calc(100vh - 240px);
   border-radius: 12px;
   box-shadow: 0 24px 64px rgb(0 0 0 / 35%);
   object-fit: contain;

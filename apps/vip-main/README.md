@@ -12,7 +12,7 @@
 | [fishing](./fishing) | 钓鱼休闲 |
 | [daily](./daily) | 日常生活 |
 
-## 照片故事
+## 图片故事
 
 [`photos.json`](./photos.json) 管理 142vip.cn 站点照片墙数据，类型为 `LifePhotoItem[]`：
 
@@ -27,7 +27,7 @@
 | `location` | 可选，地点 |
 | `tags` | 可选，标签数组 |
 
-本地开发时可通过管理界面侧栏「照片故事」编辑；构建后数据嵌入 `manifest.json` 供 GitHub Pages 只读展示。
+本地开发时可通过管理界面侧栏「图片故事」编辑；「JSON文件」视图可预览/复制 JSON；构建后数据嵌入 `manifest.json` 供 GitHub Pages 只读展示。
 
 ## 规范
 

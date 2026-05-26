@@ -40,31 +40,23 @@ const previewTarget = ref<FileNode | null>(null)
 
 const SIDEBAR_STORAGE_KEY = 'cdn-site-sidebar-visible'
 const SIDEBAR_VIEW_STORAGE_KEY = 'cdn-site-sidebar-view'
-const STORIES_SUB_VIEW_STORAGE_KEY = 'cdn-site-stories-sub-view'
 const FILE_VIEW_STORAGE_KEY = 'cdn-site-file-view'
 
 type FileViewMode = 'list' | 'grid'
-type SidebarView = 'files' | 'stories'
-type StoriesSubView = 'list' | 'json'
+type SidebarView = 'files' | 'stories' | 'json'
 
 function readSidebarView(): SidebarView {
   const saved = localStorage.getItem(SIDEBAR_VIEW_STORAGE_KEY)
-  if (saved === 'photos-json') {
-    localStorage.setItem(STORIES_SUB_VIEW_STORAGE_KEY, 'json')
-    localStorage.setItem(SIDEBAR_VIEW_STORAGE_KEY, 'stories')
+  if (saved === 'photos-json' || saved === 'json')
+    return 'json'
+  if (saved === 'stories')
     return 'stories'
-  }
-  return saved === 'stories' ? 'stories' : 'files'
-}
-
-function readStoriesSubView(): StoriesSubView {
-  return localStorage.getItem(STORIES_SUB_VIEW_STORAGE_KEY) === 'json' ? 'json' : 'list'
+  return 'files'
 }
 
 /** 默认隐藏侧栏，点击左上角按钮展开 */
 const sidebarVisible = ref(localStorage.getItem(SIDEBAR_STORAGE_KEY) === '1')
 const sidebarView = ref<SidebarView>(readSidebarView())
-const storiesSubView = ref<StoriesSubView>(readStoriesSubView())
 const fileViewMode = ref<FileViewMode>(
   localStorage.getItem(FILE_VIEW_STORAGE_KEY) === 'grid' ? 'grid' : 'list',
 )
@@ -123,15 +115,11 @@ const {
 
 watch(sidebarView, (view) => {
   localStorage.setItem(SIDEBAR_VIEW_STORAGE_KEY, view)
-  if (view === 'stories')
+  if (view === 'stories' || view === 'json')
     photoStories.load()
   if (view !== 'files')
     selectedFile.value = null
 }, { immediate: true })
-
-watch(storiesSubView, (view) => {
-  localStorage.setItem(STORIES_SUB_VIEW_STORAGE_KEY, view)
-})
 
 function openImagePreview(file: FileNode) {
   if (!isImage(file))
@@ -382,23 +370,17 @@ watch([selectedFile, fileList, fileViewMode], async () => {
         >
           <ElScrollbar>
             <div class="sidebar-mode">
-              <ElSelect v-model="sidebarView" placeholder="选择视图">
-                <ElOption label="图床目录" value="files" />
-                <ElOption label="照片故事" value="stories" />
-              </ElSelect>
-              <ElMenu
-                v-if="sidebarView === 'stories'"
-                :default-active="storiesSubView"
-                class="sidebar-stories-menu"
-                @select="(index: string) => storiesSubView = index as StoriesSubView"
-              >
-                <ElMenuItem index="list">
-                  照片墙
-                </ElMenuItem>
-                <ElMenuItem index="json">
-                  photos.json
-                </ElMenuItem>
-              </ElMenu>
+              <ElRadioGroup v-model="sidebarView" class="sidebar-view-switch">
+                <ElRadioButton value="files">
+                  图床管理
+                </ElRadioButton>
+                <ElRadioButton value="stories">
+                  图片故事
+                </ElRadioButton>
+                <ElRadioButton value="json">
+                  JSON文件
+                </ElRadioButton>
+              </ElRadioGroup>
             </div>
             <SidebarTree
               v-if="showFileBrowser"
@@ -411,23 +393,33 @@ watch([selectedFile, fileList, fileViewMode], async () => {
 
         <ElMain class="main-panel">
           <PhotoStoriesPanel
-            v-if="sidebarView === 'stories' && storiesSubView === 'list'"
+            v-if="sidebarView === 'stories'"
             :image-paths="vipMainImagePaths"
           />
-          <PhotosJsonView v-else-if="sidebarView === 'stories' && storiesSubView === 'json'" />
+          <PhotosJsonView v-else-if="sidebarView === 'json'" />
           <template v-else>
             <div class="panel-title panel-title--toolbar">
               <span>{{ listTitle }}</span>
-              <ElRadioGroup v-model="fileViewMode" size="small">
-                <ElRadioButton value="list">
+              <div class="filter-pills view-switch">
+                <button
+                  type="button"
+                  class="filter-pill"
+                  :class="{ 'is-active': fileViewMode === 'list' }"
+                  @click="fileViewMode = 'list'"
+                >
                   <ElIcon><List /></ElIcon>
                   列表
-                </ElRadioButton>
-                <ElRadioButton value="grid">
+                </button>
+                <button
+                  type="button"
+                  class="filter-pill"
+                  :class="{ 'is-active': fileViewMode === 'grid' }"
+                  @click="fileViewMode = 'grid'"
+                >
                   <ElIcon><Grid /></ElIcon>
                   照片墙
-                </ElRadioButton>
-              </ElRadioGroup>
+                </button>
+              </div>
             </div>
             <ElTable
               v-if="fileViewMode === 'list'"

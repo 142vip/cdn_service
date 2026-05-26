@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import type { FileNode } from '@/utils/validate'
-import { CopyDocument, Loading } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import { computed, ref, watch } from 'vue'
-import CdnSourcePicker from '@/components/CdnSourcePicker.vue'
-import { localPreviewUrl } from '@/composables/useLocalFiles'
-import { siteConfig } from '@/site.config'
-import { cdnPreviewUrl, copyText, getDefaultCdnBranch, getDefaultCdnHost } from '@/utils/cdn'
+import { Loading } from '@element-plus/icons-vue'
+import { computed, watch } from 'vue'
+import CdnPreviewBar from '@/components/CdnPreviewBar.vue'
+import { useAppsImageDisplay } from '@/composables/useAppsImageDisplay'
 
 const props = defineProps<{
   visible: boolean
@@ -17,57 +14,39 @@ const emit = defineEmits<{
   'update:visible': [value: boolean]
 }>()
 
-const previewBranch = ref(getDefaultCdnBranch())
-const previewHost = ref(getDefaultCdnHost())
-const imageLoaded = ref(false)
-const imageError = ref(false)
+const filePath = computed(() =>
+  props.file?.type === 'file' ? props.file.path : '',
+)
+
+const {
+  branch,
+  host,
+  cdnUrl,
+  displayUrl,
+  imageLoaded,
+  imageError,
+  resetDefaults,
+  resetImageState,
+  copyLink,
+  handleImageLoad,
+  handleImageError,
+} = useAppsImageDisplay(filePath)
 
 const dialogVisible = computed({
   get: () => props.visible,
   set: value => emit('update:visible', value),
 })
 
-const previewUrl = computed(() => {
-  if (!props.file || props.file.type !== 'file')
-    return ''
-  if (siteConfig.isLocalManage)
-    return localPreviewUrl(props.file.path)
-  return cdnPreviewUrl(props.file.path, previewBranch.value, previewHost.value)
-})
-
-const copyLink = computed(() => {
-  if (!previewUrl.value)
-    return ''
-  if (previewUrl.value.startsWith('http'))
-    return previewUrl.value
-  return `${window.location.origin}${previewUrl.value}`
-})
-
-async function handleCopyLink() {
-  if (!copyLink.value)
-    return
-  try {
-    await copyText(copyLink.value)
-    ElMessage.success('链接已复制')
-  }
-  catch {
-    ElMessage.error('复制失败')
-  }
-}
-
 watch(() => props.visible, (open) => {
   if (open) {
-    previewBranch.value = getDefaultCdnBranch()
-    previewHost.value = getDefaultCdnHost()
-    imageLoaded.value = false
-    imageError.value = false
+    resetDefaults()
+    resetImageState()
   }
 })
 
-watch(previewUrl, () => {
-  imageLoaded.value = false
-  imageError.value = false
-})
+function handleCopyLink() {
+  copyLink(cdnUrl.value)
+}
 </script>
 
 <template>
@@ -79,74 +58,45 @@ watch(previewUrl, () => {
     align-center
   >
     <template #header>
-      <div class="preview-header">
-        <span class="preview-title">{{ file?.name ?? '图片预览' }}</span>
-        <ElButton
-          v-if="copyLink"
-          size="small"
-          :icon="CopyDocument"
-          @click="handleCopyLink"
-        >
-          复制链接
-        </ElButton>
-      </div>
+      <span class="preview-title">{{ file?.name ?? '图片预览' }}</span>
     </template>
 
-    <CdnSourcePicker
-      v-if="!siteConfig.isLocalManage"
-      v-model:branch="previewBranch"
-      v-model:host="previewHost"
-      class="preview-toolbar"
+    <CdnPreviewBar
+      v-if="filePath"
+      v-model:branch="branch"
+      v-model:host="host"
+      :file-path="filePath"
+      :cdn-url="cdnUrl"
+      theme="light"
+      @copy="handleCopyLink"
     />
 
     <div class="preview-stage">
-      <div v-if="!imageLoaded && !imageError && previewUrl" class="preview-loading">
+      <div v-if="!imageLoaded && !imageError && displayUrl" class="preview-loading">
         <ElIcon class="is-loading">
           <Loading />
         </ElIcon>
       </div>
       <img
         v-show="imageLoaded && !imageError"
-        :src="previewUrl"
+        :src="displayUrl"
         :alt="file?.name"
         class="preview-img"
-        @load="imageLoaded = true"
-        @error="imageError = true"
+        @load="handleImageLoad"
+        @error="handleImageError"
       >
       <ElEmpty v-if="imageError" description="图片加载失败，请检查 CDN 链接" />
     </div>
-
-    <ElText
-      v-if="!siteConfig.isLocalManage && previewUrl"
-      type="info"
-      size="small"
-      tag="p"
-      class="preview-url"
-    >
-      {{ previewUrl }}
-    </ElText>
   </ElDialog>
 </template>
 
 <style scoped>
-.preview-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-right: 28px;
-}
-
 .preview-title {
   overflow: hidden;
   font-size: 15px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.preview-toolbar {
-  margin-bottom: 12px;
 }
 
 .preview-stage {
@@ -156,6 +106,7 @@ watch(previewUrl, () => {
   min-width: 200px;
   min-height: 120px;
   max-height: min(72vh, 820px);
+  margin-top: 12px;
   padding: 12px;
   overflow: auto;
   background: var(--el-fill-color-lighter);
@@ -178,11 +129,6 @@ watch(previewUrl, () => {
   max-width: min(100%, 820px);
   max-height: min(68vh, 780px);
   object-fit: contain;
-}
-
-.preview-url {
-  margin: 12px 0 0;
-  word-break: break-all;
 }
 </style>
 

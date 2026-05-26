@@ -53,7 +53,7 @@ export const siteConfig = {
     ] as const,
   },
 
-  /** 图床目录树中隐藏的配置文件 */
+  /** 图床管理目录树中隐藏的配置文件 */
   hiddenTreeEntries: ['photos.json'] as const,
 } as const
 

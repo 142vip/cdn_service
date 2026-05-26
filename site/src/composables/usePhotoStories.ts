@@ -56,7 +56,7 @@ export function usePhotoStories() {
       }
     }
     catch (err) {
-      error.value = err instanceof Error ? err.message : '加载照片故事失败'
+      error.value = err instanceof Error ? err.message : '加载图片故事失败'
     }
     finally {
       loading.value = false

@@ -32,11 +32,10 @@ siteConfig.cdn // defaultHost, production, development, domains
 siteConfig.allowedExtensions // jpg | webp | svg
 siteConfig.maxFileSize // 2MB
 siteConfig.footer // 页脚、ICP、百度统计 ID
-siteConfig.photoStories // photos.json 路径与分类（旅游、运动、做菜、钓鱼、日常）
+siteConfig.photoStories // photos.json 路径与分类
 siteConfig.hiddenTreeEntries // 目录树隐藏项（如 photos.json）
+siteConfig.sidebarWidth // 侧栏宽度（默认 300）
 ```
-
-修改 CDN 域名或分支后重新 `pnpm build:site` 部署。
 
 ## 图片规范
 
@@ -46,10 +45,9 @@ siteConfig.hiddenTreeEntries // 目录树隐藏项（如 photos.json）
 | 大小 | ≤ 2MB |
 | 命名 | kebab-case，无中文 |
 | 重命名 | 保留原扩展名，不自动转 webp |
-| 裁剪另存 | 默认 webp，可选 jpg；文件名 `{base}-{宽}x{高}.ext`，不含 crop/free |
+| 裁剪另存 | 默认 webp，可选 jpg；文件名 `{base}-{宽}x{高}.ext` |
 
-校验逻辑：`site/src/utils/validate.ts`
-服务端校验：`site/plugins/apps-fs.ts`
+校验：`site/src/utils/validate.ts` · 服务端：`site/plugins/apps-fs.ts`
 
 ## CDN 环境
 
@@ -58,72 +56,75 @@ siteConfig.hiddenTreeEntries // 目录树隐藏项（如 photos.json）
 | 生产 | `main` | 线上稳定引用 |
 | 开发 | `next` | 日常开发调试 |
 
-默认域名：`cdn.statically.io`（Statically）
-
-备选：`cdn.jsdelivr.net`、`fastly.jsdelivr.net`
+默认域名：`cdn.statically.io` · 备选：`cdn.jsdelivr.net`、`fastly.jsdelivr.net`
 
 ## site 架构
+
+### Vite 插件
 
 ```
 plugins/apps-fs.ts      扫描树、文件 CRUD、合规校验
 plugins/local-apps.ts   dev：/__local/* API + /apps/* 静态预览
 plugins/photos-json.ts  photos.json 读写与校验
-plugins/manifest.ts     build：写入 src/assets/manifest.json → dist/
-
-composables/
-  useLocalFiles.ts      dev 模式 API 客户端
-  useManifest.ts        Pages 模式读 manifest
-  useFileBrowser.ts     目录树、搜索、选中
-  usePhotoStories.ts    photos.json CRUD（dev）/ manifest 只读（预览）
-
-components/
-  PhotoStoriesPanel.vue 照片墙 CRUD、排序、画廊预览
-  PhotosJsonView.vue    photos.json 只读 JSON 视图
-  StoryImagePreview.vue 全屏图片预览
-
-utils/
-  validate.ts           前端校验与命名建议
-  cdn.ts                CDN URL 生成
-  crop-name.ts          裁剪文件名建议
-  convert.ts            压缩、webp 转换
+plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 ```
 
-## 照片故事（photos.json）
+### Composables
 
-- 数据文件：`apps/vip-main/photos.json`（`LifePhotoItem[]`）
-- 分类字段 `category` 使用中文：`旅游` | `运动` | `做菜` | `钓鱼` | `日常`
-- 图片路径：`apps/vip-main/{folder}/...` 或外链 `https://...`
-- dev API：`GET/PUT /__local/photos`；构建时 `manifest.json` 嵌入 `photoStories`
-- 侧栏：下拉选「图床目录 / 照片故事」；照片故事子菜单「照片墙 / photos.json」
-- 持久化键：`cdn-site-sidebar-view`、`cdn-site-stories-sub-view`
+| 文件 | 职责 |
+| --- | --- |
+| `useLocalFiles.ts` | dev 模式文件树 CRUD |
+| `useManifest.ts` | 预览模式读 manifest |
+| `useFileBrowser.ts` | 目录树、搜索、选中 |
+| `usePhotoStories.ts` | photos.json 读写（dev）/ manifest 只读（预览） |
+| `useCdnPreviewState.ts` | 预览共用：分支/host 状态、buildAppsUrl、copyLink |
+| `useAppsImageDisplay.ts` | apps 图片展示：CDN URL + dev 本地回退 |
+
+### 组件
+
+| 组件 | 职责 |
+| --- | --- |
+| `CdnSourcePicker.vue` | 分支 Radio + CDN Select（支持 light/dark） |
+| `CdnPreviewBar.vue` | 预览工具栏：Picker + URL + 复制图标（样式在 style.css） |
+| `ImagePreviewDialog.vue` | 图床双击弹窗预览 |
+| `StoryImagePreview.vue` | 图片故事全屏预览，接收 `imagePaths` 原始路径 |
+| `PhotoStoriesPanel.vue` | 图片故事 CRUD、分类筛选、排序 |
+| `PhotosJsonView.vue` | JSON文件视图：预览/复制 photos.json |
+| `CdnEnvLinks.vue` | 文件详情面板：生产/开发 CDN 链接 |
+| `FileGallery.vue` | 图床照片墙网格 |
+
+### 全局样式（`assets/styles/style.css`）
+
+| 类名 | 用途 |
+| --- | --- |
+| `.panel-toolbar` | 图片故事工具栏 |
+| `.filter-pills` / `.filter-pill` | 分类筛选、列表/照片墙切换 |
+| `.sidebar-view-switch` | 侧栏三 Tab 等宽 |
+| `.cdn-preview-bar` | CDN 预览工具栏（light/dark 用 `.is-dark`） |
+
+## 图片故事（photos.json）
+
+- 数据：`apps/vip-main/photos.json`（`LifePhotoItem[]`）
+- 分类：`旅游` | `运动` | `做菜` | `钓鱼` | `日常`
+- 图片：`apps/vip-main/{folder}/...` 或外链 `https://...`
+- 工具函数：`types/photo-story.ts` → `isRemoteStoryImage`、`isAppsImagePath`、`resolveStoryImageUrl`
+- dev API：`GET/PUT /__local/photos`
+- 构建：`manifest.json` 嵌入 `photoStories`
+
+## localStorage 键
+
+| 键 | 值 | 说明 |
+| --- | --- | --- |
+| `cdn-site-sidebar-visible` | `0` / `1` | 侧栏展开 |
+| `cdn-site-sidebar-view` | `files` / `stories` / `json` | 当前视图 |
+| `cdn-site-file-view` | `list` / `grid` | 图床列表/照片墙 |
 
 ## 部署
 
 Workflow：`.github/workflows/deploy-pages.yml`
 
 - 触发：`push` 到 `main` / `next`
-- 访问地址：`https://142vip.github.io/cdn_service/`
-- `main` / `next` 推送均会触发部署，Pages 地址相同
-
-## README 模板
-
-### 项目级 `apps/{project}/README.md`
-
-```markdown
-# {项目名}
-
-{说明}
-
-## 文件说明
-
-| 文件/目录 | 说明 |
-| --- | --- |
-| `example.webp` | 示例 |
-
-## CDN
-
-https://cdn.jsdelivr.net/gh/142vip/cdn_service@main/apps/{project}/example.webp
-```
+- 访问：`https://142vip.github.io/cdn_service/`
 
 ## 已知遗留
 

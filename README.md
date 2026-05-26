@@ -46,15 +46,21 @@ pnpm preview:site   # 预览构建产物
 | 模式 | 命令 | 说明 |
 | --- | --- | --- |
 | 本地管理 | `pnpm dev:site` | 读写当前仓库 `apps/`，改完后 git 提交 |
-| CDN 浏览 | `pnpm build:site` + Pages | 只读浏览、复制 CDN 链接；可查看照片墙与 photos.json |
+| CDN 浏览 | `pnpm build:site` + Pages | 只读浏览、复制 CDN 链接 |
 
-**侧栏视图**（本地与预览模式均可用）
+**侧栏视图**（本地与预览模式均可用，选择持久化到 `localStorage`）
 
-- **图床目录**：浏览 `apps/` 文件树，dev 下可裁剪、重命名、删除
-- **照片故事** → **照片墙**：管理 `apps/vip-main/photos.json`（dev 可编辑，预览只读）
-- **照片故事** → **photos.json**：JSON 只读预览与复制
+| 视图 | 说明 |
+| --- | --- |
+| **图床管理** | 浏览 `apps/` 文件树；dev 下可裁剪、重命名、删除；列表/照片墙切换 |
+| **图片故事** | 管理 `apps/vip-main/photos.json` 照片墙（dev 可编辑，预览只读） |
+| **JSON文件** | 内嵌预览/复制 `photos.json` 内容 |
 
-选择会持久化到浏览器 `localStorage`。
+**图片预览**（dev 与预览 UI 一致）
+
+- 图床管理：双击图片 → 弹窗预览，可切换分支/CDN、复制链接
+- 图片故事：双击图片集 → 全屏预览，同样支持分支/CDN/复制（外链仅复制原 URL）
+- dev 模式下 CDN 未推送时，预览会自动回退本地 `/apps/...` 加载
 
 **GitHub Pages**
 

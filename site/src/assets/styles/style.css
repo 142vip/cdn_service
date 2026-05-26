@@ -90,8 +90,7 @@ body {
 }
 
 .sidebar-aside.is-collapsed .sidebar-tree,
-.sidebar-aside.is-collapsed .sidebar-mode,
-.sidebar-aside.is-collapsed .sidebar-stories-menu {
+.sidebar-aside.is-collapsed .sidebar-mode {
   visibility: hidden;
 }
 
@@ -99,14 +98,19 @@ body {
   padding: 10px 12px 8px;
 }
 
-.sidebar-stories-menu {
-  margin-top: 4px;
-  border-right: none;
+.sidebar-view-switch {
+  display: flex;
+  width: 100%;
 }
 
-.sidebar-stories-menu :deep(.el-menu-item) {
-  height: 40px;
-  line-height: 40px;
+.sidebar-view-switch :deep(.el-radio-button) {
+  flex: 1;
+}
+
+.sidebar-view-switch :deep(.el-radio-button__inner) {
+  width: 100%;
+  padding: 8px 2px;
+  font-size: 12px;
 }
 
 .sidebar-tree {
@@ -167,6 +171,197 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 面板工具栏（图床管理 / 图片故事共用） */
+.panel-toolbar {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  background: var(--el-bg-color);
+}
+
+.panel-toolbar.el-header {
+  --el-header-padding: 0;
+  height: auto !important;
+}
+
+.panel-toolbar__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-toolbar__search {
+  flex: 1;
+  min-width: 260px;
+  max-width: 480px;
+}
+
+.panel-toolbar__search :deep(.el-input__wrapper) {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.panel-toolbar__search :deep(.el-input__inner) {
+  height: 32px;
+  line-height: 32px;
+}
+
+.panel-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.panel-toolbar__filters {
+  margin-top: 10px;
+}
+
+.panel-toolbar__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-pill {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 5px 14px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 999px;
+  background: var(--el-bg-color);
+  color: var(--el-text-color-regular);
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.filter-pill:hover {
+  border-color: var(--el-color-primary-light-5);
+  color: var(--el-color-primary);
+}
+
+.filter-pill.is-active {
+  border-color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-weight: 500;
+}
+
+.view-switch .filter-pill {
+  padding: 4px 12px;
+}
+
+/* CDN 预览工具栏（图床 / 图片故事共用） */
+.cdn-preview-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cdn-preview-bar__url-row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.cdn-preview-bar__url {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  word-break: break-all;
+  color: var(--el-text-color-secondary);
+}
+
+.cdn-preview-bar__copy {
+  flex-shrink: 0;
+  margin-top: -2px;
+}
+
+.cdn-preview-bar.is-dark .cdn-preview-bar__url {
+  color: rgb(255 255 255 / 65%);
+}
+
+.cdn-preview-bar.is-dark .cdn-preview-bar__copy {
+  color: rgb(255 255 255 / 78%);
+}
+
+.cdn-source-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+}
+
+.cdn-source-picker__field {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  cursor: default;
+}
+
+.cdn-source-picker__label {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  user-select: none;
+}
+
+.cdn-source-picker__control {
+  width: 148px;
+}
+
+.cdn-source-picker__control :deep(.el-select__wrapper) {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+  box-shadow: 0 0 0 1px var(--el-border-color) inset;
+}
+
+.cdn-source-picker__control :deep(.el-select__wrapper:hover) {
+  box-shadow: 0 0 0 1px var(--el-border-color-darker) inset;
+}
+
+.cdn-source-picker__control :deep(.el-select__wrapper.is-focused) {
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+}
+
+.cdn-source-picker.is-dark .cdn-source-picker__label {
+  color: rgb(255 255 255 / 62%);
+}
+
+.cdn-source-picker.is-dark .cdn-source-picker__control :deep(.el-select__wrapper) {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 18%) inset;
+  background: rgb(255 255 255 / 8%);
+}
+
+.cdn-source-picker.is-dark .cdn-source-picker__control :deep(.el-select__selected-item),
+.cdn-source-picker.is-dark .cdn-source-picker__control :deep(.el-select__caret) {
+  color: rgb(255 255 255 / 88%);
+}
+
+.cdn-source-picker.is-dark .cdn-source-picker__control :deep(.el-select__wrapper:hover) {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 28%) inset;
+}
+
+.cdn-source-picker.is-dark .cdn-source-picker__control :deep(.el-select__wrapper.is-focused) {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 45%) inset;
 }
 
 /* 照片墙 */
