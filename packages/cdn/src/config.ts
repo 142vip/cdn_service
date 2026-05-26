@@ -40,5 +40,5 @@ export const CDN_CONFIG: CdnConfig = {
   ],
 }
 
-/** npm 包名，用于 media export 路径 */
+/** npm 包名，用于media export 路径 */
 export const PACKAGE_NAME = '@142vip/cdn' as const

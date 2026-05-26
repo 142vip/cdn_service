@@ -1,11 +1,11 @@
-# media【自媒体宣传 例如：公众号】
+#media【自媒体宣传 例如：公众号】
 
 142vip平台相关cdn业务，提供静态资源加速访问服务
 
 ## 按照项目进行划分
 
 - [x] source_back 旧图片备份
-- [x] media【自媒体宣传 例如：公众号】
+- [x]media【自媒体宣传 例如：公众号】
 - [x] vip-main
 - [ ] xmind【思维导图】
 - [ ] oauth-client

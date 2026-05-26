@@ -22,7 +22,7 @@ cdn_service/
 │   ├── vite.config.ts
 │   └── package.json         # 仅声明依赖，脚本在根目录
 ├── scripts/
-│   ├── sync-media.ts        # 同步 media、生成 MEDIA_SRC
+│   ├── sync-media.ts        # 同步media、生成 MEDIA_SRC
 │   └── core/verify-commit.ts
 ├── pnpm-workspace.yaml      # workspace 仅含 site，排除 apps/
 └── package.json             # 根脚本与工具链

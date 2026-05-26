@@ -67,7 +67,7 @@ https://{host}/gh/142vip/cdn_service@{branch}/apps/{path}
 - [ ] 放置/更新文件
 - [ ] 更新 README.md
 - [ ] pnpm dev:site 本地确认
-- [ ] commit（scope: 408 | jsc | vip-main | media | vip-admin | site | scripts）
+- [ ] commit（scope: 408 | jsc | vip-main |media | vip-admin | site | scripts）
 ```
 
 ## 常用命令

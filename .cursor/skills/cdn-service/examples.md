@@ -61,7 +61,7 @@ git commit -m "refactor(media): convert wechat qrcode to webp"
 Agent 应执行的完整流程：
 
 ```
-用户：帮我把这张图加到 media/wechat 目录
+用户：帮我把这张图加到media/wechat 目录
 
 Agent：
 1. 读取本 Skill 确认规范

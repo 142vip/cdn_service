@@ -7,7 +7,7 @@
 | `408` | 408CSFamily |
 | `jsc` | JavaScriptCollection |
 | `vip-main` | 142vip 主站（含 `photos.json` 照片墙数据） |
-| `media` | 自媒体（注意历史目录 ` media` 含前导空格） |
+| `media` | 自媒体（注意历史目录 `media` 含前导空格） |
 | `vip-admin` | VIP 管理端（预留） |
 
 ## npm 包 @142vip/cdn
@@ -129,7 +129,7 @@ Workflow：`.github/workflows/deploy-pages.yml`
 ## 已知遗留
 
 - `apps/408/ukulele/` 部分中文/旧格式文件名
-- `apps/ media/` 目录名前导空格
+- `apps/media/` 目录名前导空格
 - 部分 `.png`/`.jpeg` 待迁移为 webp/jpg
 
 ## Git

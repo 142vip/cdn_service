@@ -83,7 +83,7 @@ module.exports.wechatUrl = getProductionCdnUrl('media/wechat/chu-fan-code.jpg')
 
 | 导出 | 说明 |
 | --- | --- |
-| `MEDIA_SRC` / `MediaSrc` | media 资源路径映射 |
+| `MEDIA_SRC` / `MediaSrc` |media 资源路径映射 |
 | `mediaExportPath(path)` | 构造包内 export 路径 |
 | `getCdnBase(options?)` | CDN apps 根 URL |
 | `getCdnUrl(path, options?)` | 完整 CDN 文件 URL |

@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url'
 /** 仓库根目录 */
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const pkgDir = path.join(repoRoot, 'packages/cdn')
-/** 图床 media 源目录（apps/ 下） */
-const mediaSource = path.join(repoRoot, 'apps', ' media')
+/** 图床media 源目录（apps/ 下） */
+const mediaSource = path.join(repoRoot, 'apps', 'media')
 const mediaTarget = path.join(pkgDir, 'assets/media')
 const generatedFile = path.join(pkgDir, 'src/media.generated.ts')
 
@@ -78,7 +78,7 @@ function serializeTree(node: MediaTree, indent = 2): string {
 
 function main(): void {
   if (!fs.existsSync(mediaSource))
-    throw new Error(`未找到 media 源目录: ${mediaSource}`)
+    throw new Error(`未找到media 源目录: ${mediaSource}`)
 
   resetDir(mediaTarget)
   copyDir(mediaSource, mediaTarget)
@@ -90,13 +90,13 @@ function main(): void {
     '',
     `export const MEDIA_SRC = ${serializeTree(tree)} as const`,
     '',
-    '/** media 资源路径映射类型 */',
+    '/**media 资源路径映射类型 */',
     'export type MediaSrc = typeof MEDIA_SRC',
     '',
   ].join('\n')
 
   fs.writeFileSync(generatedFile, content, 'utf-8')
-  process.stdout.write(`✓ 已同步 media → packages/cdn/assets/media\n✓ 已生成 ${path.relative(repoRoot, generatedFile)}\n`)
+  process.stdout.write(`✓ 已同步media → packages/cdn/assets/media\n✓ 已生成 ${path.relative(repoRoot, generatedFile)}\n`)
 }
 
 main()
