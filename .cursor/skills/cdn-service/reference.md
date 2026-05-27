@@ -33,7 +33,6 @@ siteConfig.allowedExtensions // jpg | webp | svg
 siteConfig.maxFileSize // 2MB
 siteConfig.footer // 页脚、ICP、百度统计 ID
 siteConfig.photoStories // photos.json 路径与分类
-siteConfig.hiddenTreeEntries // 目录树隐藏项（如 photos.json）
 siteConfig.sidebarWidth // 侧栏宽度（默认 300）
 ```
 
@@ -77,20 +76,21 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 | `useManifest.ts` | 预览模式读 manifest |
 | `useFileBrowser.ts` | 目录树、搜索、选中 |
 | `usePhotoStories.ts` | photos.json 读写（dev）/ manifest 只读（预览） |
-| `useCdnPreviewState.ts` | 预览共用：分支/host 状态、buildAppsUrl、copyLink |
-| `useAppsImageDisplay.ts` | apps 图片展示：CDN URL + dev 本地回退 |
+| `useCdnPreviewState.ts` | 预览共用：分支/host、buildAppsUrl、copyLink |
+| `useAppsImageDisplay.ts` | apps 图片 CDN 展示 + dev 本地回退 |
+| `useAppsJsonContent.ts` | apps JSON 拉取 + 格式化 + dev 本地回退 |
 
 ### 组件
 
 | 组件 | 职责 |
 | --- | --- |
-| `CdnSourcePicker.vue` | 分支 Radio + CDN Select（支持 light/dark） |
-| `CdnPreviewBar.vue` | 预览工具栏：Picker + URL + 复制图标（样式在 style.css） |
-| `ImagePreviewDialog.vue` | 图床双击弹窗预览 |
-| `StoryImagePreview.vue` | 图片故事全屏预览，接收 `imagePaths` 原始路径 |
-| `PhotoStoriesPanel.vue` | 图片故事 CRUD、分类筛选、排序 |
-| `PhotosJsonView.vue` | JSON文件视图：预览/复制 photos.json |
-| `CdnEnvLinks.vue` | 文件详情面板：生产/开发 CDN 链接 |
+| `CdnSourcePicker.vue` | 分支/CDN 下拉（light/dark） |
+| `CdnPreviewBar.vue` | 预览工具栏：下拉 + URL + 复制 |
+| `ImagePreviewDialog.vue` | 图床图片弹窗预览 |
+| `JsonPreviewDialog.vue` | 图床 JSON 弹窗预览 |
+| `StoryImagePreview.vue` | 图片故事全屏预览 |
+| `PhotoStoriesPanel.vue` | 图片故事 CRUD |
+| `CdnEnvLinks.vue` | 文件详情面板 CDN 链接 |
 | `FileGallery.vue` | 图床照片墙网格 |
 
 ### 全局样式（`assets/styles/style.css`）
@@ -99,7 +99,7 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 | --- | --- |
 | `.panel-toolbar` | 图片故事工具栏 |
 | `.filter-pills` / `.filter-pill` | 分类筛选、列表/照片墙切换 |
-| `.sidebar-view-switch` | 侧栏三 Tab 等宽 |
+| `.sidebar-view-select` | 侧栏视图下拉 |
 | `.cdn-preview-bar` | CDN 预览工具栏（light/dark 用 `.is-dark`） |
 
 ## 图片故事（photos.json）
@@ -116,7 +116,7 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 | 键 | 值 | 说明 |
 | --- | --- | --- |
 | `cdn-site-sidebar-visible` | `0` / `1` | 侧栏展开 |
-| `cdn-site-sidebar-view` | `files` / `stories` / `json` | 当前视图 |
+| `cdn-site-sidebar-view` | `files` / `stories` | 侧栏视图 |
 | `cdn-site-file-view` | `list` / `grid` | 图床列表/照片墙 |
 
 ## 部署

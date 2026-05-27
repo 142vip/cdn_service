@@ -87,7 +87,7 @@ Agent：
 7. git commit -m "feat(vip-main): add photo story for ..."
 ```
 
-侧栏「JSON文件」可预览/复制 photos.json。预览模式（`pnpm preview:site`）下图片故事与 JSON 均为只读。
+侧栏「JSON文件」已移除；在「图床管理」中双击 `photos.json` 可预览 JSON。预览模式（`pnpm preview:site`）下图片故事为只读。
 
 ## 示例 6：README 更新片段
 

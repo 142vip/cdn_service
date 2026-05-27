@@ -36,11 +36,18 @@ export function issueTagType(code: string): 'danger' | 'warning' | 'info' {
 
 export function validateFile(relativePath: string, size: number): ValidationIssue[] {
   const fileName = relativePath.split('/').pop() ?? relativePath
-  if (fileName === 'photos.json')
-    return []
+  const ext = getExtension(fileName)
+
+  if (ext === 'json') {
+    const issues: ValidationIssue[] = []
+    if (siteConfig.chineseRegex.test(relativePath))
+      issues.push({ code: 'chinese', message: '路径包含中文' })
+    if (size > siteConfig.maxFileSize)
+      issues.push({ code: 'size', message: `超过 2MB（${formatSize(size)}）` })
+    return issues
+  }
 
   const issues: ValidationIssue[] = []
-  const ext = getExtension(fileName)
 
   if (siteConfig.chineseRegex.test(relativePath)) {
     issues.push({ code: 'chinese', message: '路径包含中文' })

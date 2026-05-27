@@ -26,7 +26,7 @@ const loading = ref(true)
 const error = ref(false)
 const useLocalFallback = ref(false)
 
-const { branch, host, resetDefaults, buildAppsUrl, copyLink } = useCdnPreviewState()
+const { branch, host, resetDefaults, buildAppsUrl } = useCdnPreviewState()
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -107,10 +107,6 @@ function handleImageError() {
   error.value = true
 }
 
-function handleCopyLink() {
-  copyLink(cdnUrl.value)
-}
-
 watch(() => props.visible, (open) => {
   if (!open)
     return
@@ -170,7 +166,6 @@ watch(() => props.initialIndex, (index) => {
             :file-path="currentPath"
             :cdn-url="cdnUrl"
             theme="dark"
-            @copy="handleCopyLink"
           />
         </div>
 

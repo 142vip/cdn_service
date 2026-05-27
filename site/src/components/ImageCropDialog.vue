@@ -229,7 +229,7 @@ async function handleSave() {
         <ElButton
           v-for="preset in CROP_RATIO_PRESETS"
           :key="preset.label"
-          size="small"
+          plain
           :type="activeRatioLabel === preset.label ? 'primary' : 'default'"
           @click="setAspectRatio(preset)"
         >

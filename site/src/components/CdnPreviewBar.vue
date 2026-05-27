@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { CopyDocument } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { computed } from 'vue'
 import CdnSourcePicker from '@/components/CdnSourcePicker.vue'
 import { isRemoteStoryImage } from '@/types/photo-story'
+import { copyText } from '@/utils/cdn'
 
 const props = withDefaults(defineProps<{
   filePath: string
@@ -12,16 +14,24 @@ const props = withDefaults(defineProps<{
   theme: 'light',
 })
 
-const emit = defineEmits<{
-  copy: []
-}>()
-
 const branch = defineModel<string>('branch', { required: true })
 const host = defineModel<string>('host', { required: true })
 
 const showCdnPicker = computed(() =>
   props.filePath.startsWith('apps/') && !isRemoteStoryImage(props.filePath),
 )
+
+async function handleCopy() {
+  if (!props.cdnUrl)
+    return
+  try {
+    await copyText(props.cdnUrl)
+    ElMessage.success('链接已复制')
+  }
+  catch {
+    ElMessage.error('复制失败')
+  }
+}
 </script>
 
 <template>
@@ -42,7 +52,7 @@ const showCdnPicker = computed(() =>
           text
           circle
           aria-label="复制链接"
-          @click="emit('copy')"
+          @click="handleCopy"
         />
       </ElTooltip>
     </div>

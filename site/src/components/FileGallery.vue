@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { FileNode, TableRow } from '@/utils/validate'
-import { Folder, Picture } from '@element-plus/icons-vue'
+import { Document, Folder, Picture } from '@element-plus/icons-vue'
 import { formatSize, formatSizeOrFileCount } from '@/utils/validate'
 
 const props = defineProps<{
   items: TableRow[]
   selectedPath?: string
   isImage: (row: FileNode) => boolean
+  isJson: (row: FileNode) => boolean
   previewUrl: (row: FileNode) => string
 }>()
 
@@ -30,8 +31,17 @@ function handleDblClick(row: TableRow) {
     return
   }
   emit('select', row)
-  if (props.isImage(row as FileNode))
-    emit('preview', row as FileNode)
+  const file = row as FileNode
+  if (props.isImage(file) || props.isJson(file))
+    emit('preview', file)
+}
+
+function rowIcon(row: TableRow) {
+  if (row.type === 'directory')
+    return Folder
+  if (props.isJson(row as FileNode))
+    return Document
+  return Picture
 }
 </script>
 
@@ -47,6 +57,7 @@ function handleDblClick(row: TableRow) {
       :class="{
         'is-selected': selectedPath === row.path,
         'is-directory': row.type === 'directory',
+        'is-json': row.type === 'file' && isJson(row as FileNode),
       }"
       @click="handleClick(row)"
       @dblclick="handleDblClick(row)"
@@ -67,7 +78,7 @@ function handleDblClick(row: TableRow) {
       >
       <div v-else class="photo-wall__placeholder">
         <ElIcon :size="28">
-          <Picture />
+          <component :is="rowIcon(row)" />
         </ElIcon>
         <span>{{ row.ext?.toUpperCase() }}</span>
       </div>
@@ -78,20 +89,13 @@ function handleDblClick(row: TableRow) {
       </div>
 
       <ElTag
-        v-if="row.type === 'file' && isImage(row as FileNode) && row.issues.length === 0"
+        v-if="row.type === 'file' && isJson(row as FileNode)"
         class="photo-wall__badge"
-        type="success"
         size="small"
+        type="info"
+        effect="plain"
       >
-        合规
-      </ElTag>
-      <ElTag
-        v-else-if="row.issues.length > 0"
-        class="photo-wall__badge"
-        :type="row.issues.some(i => i.code === 'chinese' || i.code === 'size') ? 'danger' : 'warning'"
-        size="small"
-      >
-        {{ row.issues.length }} 项待处理
+        JSON
       </ElTag>
     </article>
   </div>

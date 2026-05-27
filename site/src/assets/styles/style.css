@@ -39,6 +39,10 @@ body {
   background: var(--el-bg-color);
 }
 
+.app-header .el-space .el-button {
+  margin: 0;
+}
+
 .brand-trigger {
   display: inline-flex;
   align-items: center;
@@ -98,19 +102,8 @@ body {
   padding: 10px 12px 8px;
 }
 
-.sidebar-view-switch {
-  display: flex;
+.sidebar-view-select {
   width: 100%;
-}
-
-.sidebar-view-switch :deep(.el-radio-button) {
-  flex: 1;
-}
-
-.sidebar-view-switch :deep(.el-radio-button__inner) {
-  width: 100%;
-  padding: 8px 2px;
-  font-size: 12px;
 }
 
 .sidebar-tree {
@@ -213,7 +206,20 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
   margin-left: auto;
+}
+
+/* 操作按钮组 */
+.ui-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ui-actions .el-button {
+  margin: 0;
 }
 
 .panel-toolbar__filters {
@@ -488,6 +494,19 @@ body {
   max-width: 100%;
   max-height: 280px;
   object-fit: contain;
+}
+
+.preview-box--json {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.preview-box__json-icon {
+  color: var(--el-color-primary);
 }
 
 .is-clickable {

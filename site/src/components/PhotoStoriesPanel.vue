@@ -387,13 +387,13 @@ async function submitForm() {
             v-if="!photoStories.readonly"
             :type="sortMode ? 'primary' : 'default'"
             plain
+            :icon="Rank"
             :disabled="!!keyword.trim() || !!categoryFilter"
             @click="sortMode = !sortMode"
           >
-            <ElIcon><Rank /></ElIcon>
             {{ sortMode ? '完成排序' : '调整顺序' }}
           </ElButton>
-          <ElButton :icon="Refresh" :loading="photoStories.loading.value" @click="photoStories.load()">
+          <ElButton plain :icon="Refresh" :loading="photoStories.loading.value" @click="photoStories.load()">
             刷新
           </ElButton>
           <ElButton v-if="!photoStories.readonly" type="primary" :icon="Plus" @click="openCreate">
@@ -595,11 +595,11 @@ async function submitForm() {
             </div>
           </div>
 
-          <div v-if="!photoStories.readonly" class="photo-stories__detail-actions">
-            <ElButton type="primary" plain :icon="Edit" @click="openEdit(selectedStory.id)">
+          <div v-if="!photoStories.readonly" class="photo-stories__detail-actions ui-actions">
+            <ElButton plain type="primary" :icon="Edit" @click="openEdit(selectedStory.id)">
               编辑
             </ElButton>
-            <ElButton type="danger" plain :icon="Delete" @click="handleDelete(selectedStory.id)">
+            <ElButton plain type="danger" :icon="Delete" @click="handleDelete(selectedStory.id)">
               删除
             </ElButton>
           </div>
@@ -733,7 +733,7 @@ async function submitForm() {
             >
               <ElInput v-model="form.images[index]" :placeholder="`apps/vip-main/${categoryOptions.find(item => item.value === form.category)?.folder ?? 'daily'}/example.webp`">
                 <template #append>
-                  <ElButton @click="openImagePicker(index)">
+                  <ElButton plain @click="openImagePicker(index)">
                     选择
                   </ElButton>
                 </template>
@@ -746,7 +746,7 @@ async function submitForm() {
                 preview-teleported
                 style="width: 44px; height: 44px; border-radius: 6px; flex-shrink: 0;"
               />
-              <ElButton type="danger" plain :icon="Delete" @click="removeImageField(index)" />
+              <ElButton plain type="danger" :icon="Delete" @click="removeImageField(index)" />
             </div>
             <ElButton class="photo-stories__add-image" plain type="primary" :icon="Plus" @click="addImageField">
               添加图片
@@ -930,8 +930,6 @@ async function submitForm() {
 }
 
 .photo-stories__detail-actions {
-  display: flex;
-  gap: 8px;
   margin: 12px 0;
 }
 

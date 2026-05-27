@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { ElTable } from 'element-plus'
 import type { FileNode, TableRow } from '@/utils/validate'
-import { Crop, Folder, Grid, List, Picture, Refresh, Search } from '@element-plus/icons-vue'
+import { Crop, Document, Folder, Grid, List, Picture, Refresh, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, onMounted, provide, ref, watch } from 'vue'
 import CdnEnvLinks from '@/components/CdnEnvLinks.vue'
 import FileGallery from '@/components/FileGallery.vue'
 import ImageCropDialog from '@/components/ImageCropDialog.vue'
 import ImagePreviewDialog from '@/components/ImagePreviewDialog.vue'
-import PhotosJsonView from '@/components/PhotosJsonView.vue'
+import JsonPreviewDialog from '@/components/JsonPreviewDialog.vue'
 import PhotoStoriesPanel from '@/components/PhotoStoriesPanel.vue'
 import SidebarTree from '@/components/SidebarTree.vue'
 import SiteFooter from '@/components/SiteFooter.vue'
@@ -19,6 +19,7 @@ import { useManifest } from '@/composables/useManifest'
 import { usePhotoStories } from '@/composables/usePhotoStories'
 import { siteConfig } from '@/site.config'
 import { cdnPreviewUrl } from '@/utils/cdn'
+import { isJsonFile } from '@/utils/file-type'
 import { isConvertibleImage, isCropableImage, isRasterImage } from '@/utils/image'
 import { flattenFiles, formatSize, formatSizeOrFileCount, getFileSuggestion, suggestRename } from '@/utils/validate'
 
@@ -37,18 +38,18 @@ const cropVisible = ref(false)
 const cropTarget = ref<FileNode | null>(null)
 const previewVisible = ref(false)
 const previewTarget = ref<FileNode | null>(null)
+const jsonPreviewVisible = ref(false)
+const jsonPreviewTarget = ref<FileNode | null>(null)
 
 const SIDEBAR_STORAGE_KEY = 'cdn-site-sidebar-visible'
 const SIDEBAR_VIEW_STORAGE_KEY = 'cdn-site-sidebar-view'
 const FILE_VIEW_STORAGE_KEY = 'cdn-site-file-view'
 
 type FileViewMode = 'list' | 'grid'
-type SidebarView = 'files' | 'stories' | 'json'
+type SidebarView = 'files' | 'stories'
 
 function readSidebarView(): SidebarView {
   const saved = localStorage.getItem(SIDEBAR_VIEW_STORAGE_KEY)
-  if (saved === 'photos-json' || saved === 'json')
-    return 'json'
   if (saved === 'stories')
     return 'stories'
   return 'files'
@@ -115,7 +116,7 @@ const {
 
 watch(sidebarView, (view) => {
   localStorage.setItem(SIDEBAR_VIEW_STORAGE_KEY, view)
-  if (view === 'stories' || view === 'json')
+  if (view === 'stories')
     photoStories.load()
   if (view !== 'files')
     selectedFile.value = null
@@ -128,12 +129,26 @@ function openImagePreview(file: FileNode) {
   previewVisible.value = true
 }
 
+function openJsonPreview(file: FileNode) {
+  if (!isJsonFile(file))
+    return
+  jsonPreviewTarget.value = file
+  jsonPreviewVisible.value = true
+}
+
+function openFilePreview(file: FileNode) {
+  if (isImage(file))
+    openImagePreview(file)
+  else if (isJsonFile(file))
+    openJsonPreview(file)
+}
+
 function handleRowDblClick(row: TableRow) {
   if (row.type !== 'file')
     return
   const file = findFileByPath(row.path)
-  if (file && isImage(file))
-    openImagePreview(file)
+  if (file)
+    openFilePreview(file)
 }
 
 const previewSrc = computed(() => {
@@ -265,9 +280,12 @@ function handleGallerySelect(row: TableRow) {
   handleRowClick(row)
 }
 
-function handleGalleryPreview(file: FileNode) {
-  if (isImage(file))
-    openImagePreview(file)
+function fileRowIcon(row: TableRow) {
+  if (row.type === 'directory')
+    return Folder
+  if (isJsonFile(row as FileNode))
+    return Document
+  return Picture
 }
 
 function fileRowClassName({ row }: { row: TableRow }) {
@@ -334,7 +352,7 @@ watch([selectedFile, fileList, fileViewMode], async () => {
           style="width: 240px;"
           :prefix-icon="Search"
         />
-        <ElButton :icon="Refresh" :loading="isLoading" @click="handleRefresh">
+        <ElButton :icon="Refresh" plain :loading="isLoading" @click="handleRefresh">
           刷新
         </ElButton>
       </ElSpace>
@@ -370,17 +388,10 @@ watch([selectedFile, fileList, fileViewMode], async () => {
         >
           <ElScrollbar>
             <div class="sidebar-mode">
-              <ElRadioGroup v-model="sidebarView" class="sidebar-view-switch">
-                <ElRadioButton value="files">
-                  图床管理
-                </ElRadioButton>
-                <ElRadioButton value="stories">
-                  图片故事
-                </ElRadioButton>
-                <ElRadioButton value="json">
-                  JSON文件
-                </ElRadioButton>
-              </ElRadioGroup>
+              <ElSelect v-model="sidebarView" class="sidebar-view-select" placeholder="选择视图">
+                <ElOption label="图床管理" value="files" />
+                <ElOption label="图片故事" value="stories" />
+              </ElSelect>
             </div>
             <SidebarTree
               v-if="showFileBrowser"
@@ -396,7 +407,6 @@ watch([selectedFile, fileList, fileViewMode], async () => {
             v-if="sidebarView === 'stories'"
             :image-paths="vipMainImagePaths"
           />
-          <PhotosJsonView v-else-if="sidebarView === 'json'" />
           <template v-else>
             <div class="panel-title panel-title--toolbar">
               <span>{{ listTitle }}</span>
@@ -437,7 +447,7 @@ watch([selectedFile, fileList, fileViewMode], async () => {
                 <template #default="{ row }">
                   <ElSpace>
                     <ElIcon class="file-icon">
-                      <component :is="row.type === 'directory' ? Folder : Picture" />
+                      <component :is="fileRowIcon(row)" />
                     </ElIcon>
                     <span>{{ row.name }}</span>
                   </ElSpace>
@@ -467,10 +477,11 @@ watch([selectedFile, fileList, fileViewMode], async () => {
               :items="fileList"
               :selected-path="selectedFile?.path"
               :is-image="isImage"
+              :is-json="isJsonFile"
               :preview-url="filePreviewUrl"
               @navigate="handleRowClick"
               @select="handleGallerySelect"
-              @preview="handleGalleryPreview"
+              @preview="openFilePreview"
             />
           </template>
         </ElMain>
@@ -514,8 +525,8 @@ watch([selectedFile, fileList, fileViewMode], async () => {
                   </ul>
                   <ElButton
                     v-if="siteConfig.isLocalManage"
-                    size="small"
-                    type="warning"
+                    plain
+                    type="primary"
                     style="margin-top: 8px;"
                     @click="openRename(selectedFile)"
                   >
@@ -539,20 +550,34 @@ watch([selectedFile, fileList, fileViewMode], async () => {
                 />
               </div>
 
-              <ElSpace v-if="siteConfig.isLocalManage && selectedFile.type === 'file'" wrap style="margin-top: 12px;">
-                <ElButton v-if="canCrop(selectedFile)" size="small" type="primary" :icon="Crop" @click="openCrop(selectedFile)">
+              <div
+                v-else-if="isJsonFile(selectedFile)"
+                class="preview-box preview-box--json is-clickable"
+                title="双击预览 JSON"
+                @dblclick="openJsonPreview(selectedFile)"
+              >
+                <ElIcon :size="36" class="preview-box__json-icon">
+                  <Document />
+                </ElIcon>
+                <ElText type="info" size="small">
+                  双击预览 JSON 内容
+                </ElText>
+              </div>
+
+              <div v-if="siteConfig.isLocalManage && selectedFile.type === 'file'" class="ui-actions" style="margin-top: 12px;">
+                <ElButton v-if="canCrop(selectedFile)" plain type="primary" :icon="Crop" @click="openCrop(selectedFile)">
                   裁剪
                 </ElButton>
-                <ElButton size="small" type="warning" @click="openRename(selectedFile)">
+                <ElButton plain @click="openRename(selectedFile)">
                   重命名
                 </ElButton>
-                <ElButton v-if="canConvertWebp(selectedFile)" size="small" type="success" @click="handleConvertWebp(selectedFile)">
+                <ElButton v-if="canConvertWebp(selectedFile)" plain @click="handleConvertWebp(selectedFile)">
                   转 WebP
                 </ElButton>
-                <ElButton size="small" type="danger" @click="handleDelete(selectedFile)">
+                <ElButton plain type="danger" @click="handleDelete(selectedFile)">
                   删除
                 </ElButton>
-              </ElSpace>
+              </div>
 
               <ElDivider content-position="left">
                 CDN 链接
@@ -574,6 +599,11 @@ watch([selectedFile, fileList, fileViewMode], async () => {
   <ImagePreviewDialog
     v-model:visible="previewVisible"
     :file="previewTarget"
+  />
+
+  <JsonPreviewDialog
+    v-model:visible="jsonPreviewVisible"
+    :file="jsonPreviewTarget"
   />
 
   <ImageCropDialog
@@ -605,7 +635,7 @@ watch([selectedFile, fileList, fileViewMode], async () => {
               {{ r }}
             </li>
           </ul>
-          <ElButton size="small" link type="primary" @click="renameValue = renameSuggestion!.suggested">
+          <ElButton link type="primary" @click="renameValue = renameSuggestion!.suggested">
             使用建议名称
           </ElButton>
         </template>

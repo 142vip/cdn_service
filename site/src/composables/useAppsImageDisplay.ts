@@ -6,7 +6,7 @@ import { siteConfig } from '@/site.config'
 
 /** apps/ 路径图片：CDN 预览 + dev 本地回退，dev / 预览 UI 一致 */
 export function useAppsImageDisplay(filePath: Ref<string> | ComputedRef<string>) {
-  const { branch, host, resetDefaults, buildAppsUrl, copyLink } = useCdnPreviewState()
+  const { branch, host, resetDefaults, buildAppsUrl } = useCdnPreviewState()
   const imageLoaded = ref(false)
   const imageError = ref(false)
   const useLocalFallback = ref(false)
@@ -59,7 +59,6 @@ export function useAppsImageDisplay(filePath: Ref<string> | ComputedRef<string>)
     imageError,
     resetDefaults,
     resetImageState,
-    copyLink,
     handleImageLoad,
     handleImageError,
   }

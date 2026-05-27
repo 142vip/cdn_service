@@ -27,7 +27,7 @@
 | `location` | 可选，地点 |
 | `tags` | 可选，标签数组 |
 
-本地开发时可通过管理界面侧栏「图片故事」编辑；「JSON文件」视图可预览/复制 JSON；构建后数据嵌入 `manifest.json` 供 GitHub Pages 只读展示。
+本地开发时可通过侧栏「图片故事」编辑；在「图床管理」中浏览并双击 `photos.json` 可预览 JSON；构建后数据嵌入 `manifest.json` 供 GitHub Pages 只读展示。
 
 ## 规范
 

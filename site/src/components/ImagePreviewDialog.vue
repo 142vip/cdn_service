@@ -27,7 +27,6 @@ const {
   imageError,
   resetDefaults,
   resetImageState,
-  copyLink,
   handleImageLoad,
   handleImageError,
 } = useAppsImageDisplay(filePath)
@@ -43,10 +42,6 @@ watch(() => props.visible, (open) => {
     resetImageState()
   }
 })
-
-function handleCopyLink() {
-  copyLink(cdnUrl.value)
-}
 </script>
 
 <template>
@@ -68,7 +63,6 @@ function handleCopyLink() {
       :file-path="filePath"
       :cdn-url="cdnUrl"
       theme="light"
-      @copy="handleCopyLink"
     />
 
     <div class="preview-stage">
