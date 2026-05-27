@@ -2,6 +2,7 @@
   "name": "@142vip/cdn",
   "type": "module",
   "version": "0.0.1-alpha.0",
+  "private": false,
   "description": "142vip CDN 静态资源与 URL 工具（media / vip-main JSON + getCdnUrl）",
   "author": "142vip",
   "license": "MIT",
