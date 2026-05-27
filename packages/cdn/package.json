@@ -2,7 +2,7 @@
   "name": "@142vip/cdn",
   "type": "module",
   "version": "0.0.1",
-  "description": "142vip CDN 静态资源与 URL 工具（media 资源 + getCdnBase）",
+  "description": "142vip CDN 静态资源与 URL 工具（media / vip-main JSON + getCdnUrl）",
   "author": "142vip",
   "license": "MIT",
   "repository": {
@@ -21,7 +21,8 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./media/*": "./assets/media/*"
+    "./media/*": "./assets/media/*",
+    "./vip-main/*": "./assets/vip-main/*"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

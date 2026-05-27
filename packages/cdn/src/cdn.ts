@@ -1,5 +1,6 @@
 import type { CdnBranch, CdnDomainConfig, CdnUrlOptions } from './config'
 import { CDN_CONFIG } from './config'
+import { normalizeVipMainPath } from './vip-main-path'
 
 export type { CdnUrlOptions }
 
@@ -66,4 +67,26 @@ export function getProductionCdnUrl(relativePath: string, host?: string): string
  */
 export function getDevelopmentCdnUrl(relativePath: string, host?: string): string {
   return getCdnUrl(relativePath, { branch: CDN_CONFIG.developmentBranch, host })
+}
+
+/**
+ * vip-main 应用 JSON 文件 CDN URL
+ * @param relativePath 相对于 `apps/vip-main/` 的路径，如 `photos.json`
+ */
+export function getVipMainCdnUrl(relativePath: string, options?: CdnUrlOptions): string {
+  return getCdnUrl(`vip-main/${normalizeVipMainPath(relativePath)}`, options)
+}
+
+/**
+ * vip-main 应用 JSON 生产环境 CDN URL（main + 默认域名）
+ */
+export function getVipMainProductionCdnUrl(relativePath: string, host?: string): string {
+  return getVipMainCdnUrl(relativePath, { branch: CDN_CONFIG.productionBranch, host })
+}
+
+/**
+ * vip-main 应用 JSON 开发环境 CDN URL（next + 默认域名）
+ */
+export function getVipMainDevelopmentCdnUrl(relativePath: string, host?: string): string {
+  return getVipMainCdnUrl(relativePath, { branch: CDN_CONFIG.developmentBranch, host })
 }
