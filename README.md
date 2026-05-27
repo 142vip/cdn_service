@@ -7,7 +7,7 @@
 ```
 cdn_service/
 ├── apps/                    # 图床资源（按项目分目录，主要工作区）
-├── packages/cdn/            # @142vip/cdn npm 包（media 资源 + CDN 工具）
+├── packages/cdn/            # @142vip/cdn npm 包（media 资源 + vip-main JSON + CDN 工具）
 ├── site/                    # 图床管理界面（pnpm workspace 子包）
 │   ├── plugins/             # Vite 插件：apps-fs、local-apps、manifest
 │   ├── src/
@@ -22,8 +22,8 @@ cdn_service/
 │   ├── vite.config.ts
 │   └── package.json         # 仅声明依赖，脚本在根目录
 ├── scripts/
-│   ├── sync-media.ts        # 同步media、生成 MEDIA_SRC
-│   └── core/verify-commit.ts
+│   ├── sync-media.ts        # 同步 media / vip-main JSON、生成 MEDIA_SRC / VIP_MAIN_SRC
+│   └── verify-commit.ts     # commit-msg hook 校验
 ├── pnpm-workspace.yaml      # workspace 仅含 site，排除 apps/
 └── package.json             # 根脚本与工具链
 ```
@@ -93,8 +93,11 @@ pnpm sync:cdn · build:cdn · prepublish:cdn · publish:cdn
 ```
 
 ```ts
-import { getProductionCdnUrl } from '@142vip/cdn'
+import { getProductionCdnUrl, VIP_MAIN_CDN } from '@142vip/cdn'
 import wechatCode from '@142vip/cdn/media/wechat/chu-fan-code.jpg'
+import photos from '@142vip/cdn/vip-main/photos.json'
+
+const photosUrl = VIP_MAIN_CDN.photos.production
 ```
 
 详见 [packages/cdn/README.md](packages/cdn/README.md)。

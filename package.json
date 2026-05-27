@@ -56,6 +56,6 @@
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint:fix",
-    "commit-msg": "npx node --loader ts-node/esm --no-warnings scripts/core/verify-commit.ts"
+    "commit-msg": "npx node --loader ts-node/esm --no-warnings scripts/verify-commit.ts"
   }
 }

@@ -15,11 +15,13 @@
 路径：`packages/cdn/`，脚本：`scripts/sync-media.ts`
 
 ```bash
-pnpm sync:cdn        # 同步 apps/media → MEDIA_SRC
+pnpm sync:cdn        # 同步 apps/media + apps/vip-main JSON → MEDIA_SRC / VIP_MAIN_SRC
 pnpm build:cdn       # 构建 ESM/CJS
 pnpm prepublish:cdn  # dry-run 预发布
 pnpm publish:cdn     # 发布 npm
 ```
+
+导出：`MEDIA_SRC`（media 图片）、`VIP_MAIN_SRC` / `VIP_MAIN_CDN`（vip-main JSON 包内路径与 CDN 链接）、`getVipMainProductionCdnUrl('photos.json')`
 
 配置：`packages/cdn/src/config.ts`（与 site 逻辑一致，独立维护）
 
