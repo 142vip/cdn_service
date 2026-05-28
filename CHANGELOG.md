@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## v0.0.1-alpha.4 (2026-05-28)
+
+### ✨ Features
+
+- 优化页面样式，支持可拖拽排序 &nbsp;-&nbsp; by **chufan** [<samp>(4b07a)</samp>](https://github.com/142vip/cdn_service/commit/4b07a41)
+- 统一页面按钮样式，支持JSON文件管理 &nbsp;-&nbsp; by **chufan** [<samp>(9bef1)</samp>](https://github.com/142vip/cdn_service/commit/9bef183)
+- **@142vip/cdn**:
+  - 优化资源路径导出，支持`vip-main`应用资源 &nbsp;-&nbsp; by **chufan** [<samp>(477ab)</samp>](https://github.com/142vip/cdn_service/commit/477ab49)
+- **scripts**:
+  - 调整脚本，支持同步media目录 &nbsp;-&nbsp; by **chufan** [<samp>(291bc)</samp>](https://github.com/142vip/cdn_service/commit/291bc07)
+
+### 🐛 Bug Fixes
+
+- **media**:
+  - 修复路径异常导致资源加载异常 &nbsp;-&nbsp; by **chufan** [<samp>(9b2ba)</samp>](https://github.com/142vip/cdn_service/commit/9b2ba33)
+
+### 📖 Documentation
+
+- 更新文档，增加功能和基础用法介绍 &nbsp;-&nbsp; by **chufan** [<samp>(9d2f1)</samp>](https://github.com/142vip/cdn_service/commit/9d2f1b3)
+
+### 😏 Release Packages
+
+- **@142vip/cdn**:
+  - Publish `v0.0.1-alpha.0` &nbsp;-&nbsp; by **chufan** [<samp>(53fb3)</samp>](https://github.com/142vip/cdn_service/commit/53fb344)
+
+**Release New Version v0.0.1-alpha.4 [👉 View Changes On GitHub](https://github.com/142vip/cdn_service/compare/v0.0.1-alpha.3...v0.0.1-alpha.4)**
+
 ## v0.0.1-alpha.3 (2026-05-26)
 
 ### ✨ Features
