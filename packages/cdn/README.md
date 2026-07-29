@@ -133,6 +133,22 @@ module.exports.wechatUrl = getProductionCdnUrl('media/wechat/chu-fan-code.jpg')
 
 在 monorepo 根目录：`pnpm sync:cdn` · `pnpm build:cdn` · `pnpm prepublish:cdn` · `pnpm publish:cdn`
 
+### 同步机制
+
+`pnpm sync:cdn`（`scripts/sync-media.ts`）会：
+
+1. 复制 `apps/media/` → `packages/cdn/assets/media/`，生成 `MEDIA_SRC`
+2. 扫描 `apps/vip-main/**/*.json` → `packages/cdn/assets/vip-main/`，生成 `VIP_MAIN_SRC` 与 `VIP_MAIN_CDN`
+
+`assets/` 目录在 gitignore 中，发布 npm 前须执行 `pnpm build:cdn`。新增 vip-main JSON 文件会自动纳入同步。
+
+### package exports
+
+```textmate
+"./media/*": "./assets/media/*",
+"./vip-main/*": "./assets/vip-main/*"
+```
+
 新增 CDN 域名：编辑 `src/config.ts` 的 `domains` 数组。
 
 ## 证书

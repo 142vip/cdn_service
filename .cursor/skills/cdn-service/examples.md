@@ -47,13 +47,14 @@ git commit -m "refactor(media): convert wechat qrcode to webp"
 
 ## 示例 4：新增 SVG 图标
 
-**场景**：为 `vip-main` 添加 Twitter 图标
+**场景**：为 `media` 添加 Twitter 图标
 
 ```
-1. 创建 apps/vip-main/svg/twitter.svg（≤2MB，纯矢量通常很小）
-2. 更新 apps/vip-main/svg/README.md
+1. 创建 apps/media/svg/twitter.svg（≤2MB，纯矢量通常很小）
+2. 更新 apps/media/svg/README.md
 3. 在图床管理界面确认 CDN 链接
-4. git commit -m "feat(vip-main): add twitter svg icon"
+4. pnpm sync:cdn   # 同步至 @142vip/cdn 包（如需 npm 发布）
+5. git commit -m "feat(media): add twitter svg icon"
 ```
 
 ## 示例 5：Agent 收到「上传图片」请求
@@ -73,22 +74,6 @@ Agent：
 7. 汇报 CDN 链接
 ```
 
-## 示例 7：编辑图片故事
-
-**场景**：为 142vip.cn 照片墙新增一条故事
-
-```
-1. pnpm dev:site
-2. 侧栏选「图片故事」
-3. 点击「新增故事」，填写标题、描述、分类（中文：旅游/运动/做菜/钓鱼/日常）
-4. 从图床选图或填写 apps/vip-main/{folder}/... 路径
-5. 保存后确认 apps/vip-main/photos.json 已更新
-6. 双击图片集可全屏预览，切换分支/CDN 后复制链接
-7. git commit -m "feat(vip-main): add photo story for ..."
-```
-
-侧栏「JSON文件」已移除；在「图床管理」中双击 `photos.json` 可预览 JSON。预览模式（`pnpm preview:site`）下图片故事为只读。
-
 ## 示例 6：README 更新片段
 
 新增 `apps/jsc/banner-home.jpg` 后，更新 `apps/jsc/README.md`：
@@ -100,4 +85,32 @@ Agent：
 | --- | --- |
 | `logo-jsc.jpg` | 项目 Logo |
 | `banner-home.jpg` | 首页 Banner 图 |
+```
+
+## 示例 7：编辑图片故事
+
+**场景**：为 142vip.cn 照片墙新增一条故事
+
+```
+1. pnpm dev:site
+2. 侧栏选「图片故事」
+3. 点击「新增故事」，填写标题、描述、分类（中文：旅游/运动/做菜/钓鱼/日常）
+4. 从图床选图或填写 apps/vip-main/{folder}/... 路径
+5. 保存后确认 apps/vip-main/photos.json 已更新
+6. 双击图片集可全屏预览，切换分支/CDN 后复制链接
+7. pnpm sync:cdn   # 同步 photos.json 至 @142vip/cdn（npm 消费方需要时）
+8. git commit -m "feat(vip-main): add photo story for ..."
+```
+
+侧栏「JSON文件」已移除；在「图床管理」中双击 `photos.json` 可预览 JSON（支持复制内容与 CDN 链接）。预览模式（`pnpm preview:site`）下图片故事为只读。
+
+## 示例 8：发布 @142vip/cdn
+
+**场景**：更新了 `apps/media` 图片或 `apps/vip-main/photos.json`，需发布 npm 包
+
+```
+1. pnpm sync:cdn        # apps/media + apps/vip-main/**/*.json → packages/cdn/assets/
+2. pnpm build:cdn       # 生成 dist/ 与 *.generated.ts
+3. pnpm prepublish:cdn  # dry-run 检查发布内容
+4. pnpm publish:cdn     # 发布至 npm
 ```

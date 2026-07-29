@@ -10,7 +10,7 @@ export const MEDIA_SRC = {
     juejin: mediaExportPath('svg/juejin.svg'),
   },
   wechat: {
-    chuFan443650x650: mediaExportPath('wechat/chu-fan-443-650x650.jpg'),
+    chuFan443450x450: mediaExportPath('wechat/chu-fan-443-450x450.jpg'),
     chuFan443: mediaExportPath('wechat/chu-fan-443.jpg'),
     chuFanCode450x450: mediaExportPath('wechat/chu-fan-code-450x450.webp'),
     chuFanCode: mediaExportPath('wechat/chu-fan-code.jpg'),
@@ -20,5 +20,5 @@ export const MEDIA_SRC = {
   },
 } as const
 
-/**media 资源路径映射类型 */
+/** media 资源路径映射类型 */
 export type MediaSrc = typeof MEDIA_SRC

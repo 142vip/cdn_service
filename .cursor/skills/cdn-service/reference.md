@@ -21,7 +21,23 @@ pnpm prepublish:cdn  # dry-run 预发布
 pnpm publish:cdn     # 发布 npm
 ```
 
-导出：`MEDIA_SRC`（media 图片）、`VIP_MAIN_SRC` / `VIP_MAIN_CDN`（vip-main JSON 包内路径与 CDN 链接）、`getVipMainProductionCdnUrl('photos.json')`
+导出：
+
+| 导出 | 说明 |
+| --- | --- |
+| `MEDIA_SRC` | media 图片包内路径映射 |
+| `VIP_MAIN_SRC` / `VIP_MAIN_CDN` | vip-main JSON 包内路径与 CDN 链接 |
+| `getVipMainProductionCdnUrl('photos.json')` | photos.json 生产环境 CDN URL |
+| `LifePhotoItem` | photos.json 单条数据类型 |
+
+包内资源 subpath：
+
+```textmate
+"./media/*": "./assets/media/*",
+"./vip-main/*": "./assets/vip-main/*"
+```
+
+`assets/` 由 `pnpm sync:cdn` 生成（gitignore），发布 npm 前需执行 `pnpm build:cdn`。
 
 配置：`packages/cdn/src/config.ts`（与 site 逻辑一致，独立维护）
 
@@ -42,7 +58,7 @@ siteConfig.sidebarWidth // 侧栏宽度（默认 300）
 
 | 规则 | 要求 |
 | --- | --- |
-| 格式 | `.webp` / `.jpg` / `.svg` |
+| 格式 | `.webp` / `.jpg` / `.svg`；JSON 仅校验路径中文与大小 |
 | 大小 | ≤ 2MB |
 | 命名 | kebab-case，无中文 |
 | 重命名 | 保留原扩展名，不自动转 webp |
@@ -78,7 +94,7 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 | `useManifest.ts` | 预览模式读 manifest |
 | `useFileBrowser.ts` | 目录树、搜索、选中 |
 | `usePhotoStories.ts` | photos.json 读写（dev）/ manifest 只读（预览） |
-| `useCdnPreviewState.ts` | 预览共用：分支/host、buildAppsUrl、copyLink |
+| `useCdnPreviewState.ts` | 预览共用：分支/host、buildAppsUrl |
 | `useAppsImageDisplay.ts` | apps 图片 CDN 展示 + dev 本地回退 |
 | `useAppsJsonContent.ts` | apps JSON 拉取 + 格式化 + dev 本地回退 |
 
@@ -87,7 +103,7 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 | 组件 | 职责 |
 | --- | --- |
 | `CdnSourcePicker.vue` | 分支/CDN 下拉（light/dark） |
-| `CdnPreviewBar.vue` | 预览工具栏：下拉 + URL + 复制 |
+| `CdnPreviewBar.vue` | 预览工具栏：下拉 + URL + 图标复制链接 |
 | `ImagePreviewDialog.vue` | 图床图片弹窗预览 |
 | `JsonPreviewDialog.vue` | 图床 JSON 弹窗预览 |
 | `StoryImagePreview.vue` | 图片故事全屏预览 |
@@ -103,6 +119,7 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 | `.filter-pills` / `.filter-pill` | 分类筛选、列表/照片墙切换 |
 | `.sidebar-view-select` | 侧栏视图下拉 |
 | `.cdn-preview-bar` | CDN 预览工具栏（light/dark 用 `.is-dark`） |
+| `.ui-actions` | 操作按钮组（详情面板等） |
 
 ## 图片故事（photos.json）
 
@@ -110,8 +127,10 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 - 分类：`旅游` | `运动` | `做菜` | `钓鱼` | `日常`
 - 图片：`apps/vip-main/{folder}/...` 或外链 `https://...`
 - 工具函数：`types/photo-story.ts` → `isRemoteStoryImage`、`isAppsImagePath`、`resolveStoryImageUrl`
+- npm 类型：`@142vip/cdn` 导出 `LifePhotoItem`（与 site 侧结构一致）
 - dev API：`GET/PUT /__local/photos`
 - 构建：`manifest.json` 嵌入 `photoStories`
+- npm 同步：变更 `photos.json` 后执行 `pnpm sync:cdn`（或 `pnpm build:cdn`）更新 `@142vip/cdn` 包内资源
 
 ## localStorage 键
 
@@ -138,4 +157,4 @@ Workflow：`.github/workflows/deploy-pages.yml`
 
 - 分支：`main` / `next`
 - 包管理：pnpm（workspace 仅 `site/`）
-- Hooks：pre-commit `lint:fix`，commit-msg `verify-commit.ts`
+- Hooks：pre-commit `lint:fix`，commit-msg `scripts/verify-commit.ts`
