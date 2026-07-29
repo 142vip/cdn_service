@@ -163,7 +163,7 @@ function main(): void {
     '',
     `export const MEDIA_SRC = ${serializeTree(tree)} as const`,
     '',
-    '/**media 资源路径映射类型 */',
+    '/** media 资源路径映射类型 */',
     'export type MediaSrc = typeof MEDIA_SRC',
     '',
   ].join('\n')
