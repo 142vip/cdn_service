@@ -29,7 +29,7 @@
 
 本地开发时可通过侧栏「图片故事」编辑；在「图床管理」中浏览并双击 `photos.json` 可预览 JSON；构建后数据嵌入 `manifest.json` 供 GitHub Pages 只读展示。
 
-npm 包 `@142vip/cdn` 会同步打包 `photos.json` 至 `assets/vip-main/`，可直接 `import` 或通过 `VIP_MAIN_CDN.photos.production` 获取 CDN 链接。
+npm 包 `@142vip/cdn` 会同步打包 `photos.json` 至 `assets/vip-main/`，可直接 `import` 或通过 `VIP_MAIN_CDN.photos.production` 获取 CDN 链接。变更后执行 `pnpm sync:cdn`（或 `pnpm build:cdn`）更新 npm 包资源。
 
 ## 规范
 

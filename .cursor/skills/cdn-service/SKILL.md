@@ -23,7 +23,10 @@ cdn_service/
 │       ├── components/
 │       ├── composables/
 │       └── utils/
-├── packages/cdn/
+├── packages/cdn/              # @142vip/cdn npm 包（media + vip-main JSON）
+├── scripts/
+│   ├── sync-media.ts          # 同步 apps → packages/cdn/assets，生成 MEDIA_SRC / VIP_MAIN_SRC
+│   └── verify-commit.ts       # commit-msg hook
 └── package.json
 ```
 
@@ -45,12 +48,12 @@ cdn_service/
 
 ### 图床管理预览
 
-共用 **`CdnPreviewBar`**：分支下拉 + CDN 下拉 + URL + 复制链接。
+共用 **`CdnPreviewBar`**：分支下拉 + CDN 下拉 + URL + 圆形图标复制链接（复制逻辑内聚在组件内）。
 
 | 类型 | 组件 | 触发 |
 | --- | --- | --- |
 | 图片 | `ImagePreviewDialog` | 双击 |
-| JSON | `JsonPreviewDialog` | 双击 |
+| JSON | `JsonPreviewDialog` | 双击（含复制内容） |
 
 `photos.json` 等 JSON 文件在目录树中可见，不再单独设 JSON 侧栏视图。
 
@@ -58,7 +61,11 @@ cdn_service/
 
 - 左上角 Logo：展开/收起侧栏
 - dev：裁剪、重命名、转 WebP、删除
-- 图片故事：双击全屏预览（`StoryImagePreview`）
+- 图片故事：双击全屏预览（`StoryImagePreview`）；列表支持拖拽排序
+
+## @142vip/cdn
+
+`pnpm sync:cdn` 同步 `apps/media` 与 `apps/vip-main/**/*.json` 至 `packages/cdn/assets/`，并生成 `MEDIA_SRC`、`VIP_MAIN_SRC`、`VIP_MAIN_CDN`。发布前执行 `pnpm build:cdn`。
 
 ## 常用命令
 
@@ -66,6 +73,8 @@ cdn_service/
 pnpm dev:site
 pnpm build:site
 pnpm preview:site
+pnpm sync:cdn
+pnpm build:cdn
 pnpm lint:fix
 ```
 

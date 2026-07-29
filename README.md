@@ -9,7 +9,7 @@ cdn_service/
 ├── apps/                    # 图床资源（按项目分目录，主要工作区）
 ├── packages/cdn/            # @142vip/cdn npm 包（media 资源 + vip-main JSON + CDN 工具）
 ├── site/                    # 图床管理界面（pnpm workspace 子包）
-│   ├── plugins/             # Vite 插件：apps-fs、local-apps、manifest
+│   ├── plugins/             # Vite 插件：apps-fs、local-apps、photos-json、manifest
 │   ├── src/
 │   │   ├── site.config.ts   # 统一配置（CDN 域名、规范、页脚等）
 │   │   ├── main.ts
@@ -91,6 +91,8 @@ https://cdn.statically.io/gh/142vip/cdn_service@main/apps/vip-main/daily/example
 ```bash
 pnpm sync:cdn · build:cdn · prepublish:cdn · publish:cdn
 ```
+
+`pnpm sync:cdn` 会同步 `apps/media` 图片与 `apps/vip-main/**/*.json`（含 `photos.json`）至 npm 包 `assets/` 目录，并生成 `MEDIA_SRC`、`VIP_MAIN_SRC`、`VIP_MAIN_CDN`。
 
 ```ts
 import { getProductionCdnUrl, VIP_MAIN_CDN } from '@142vip/cdn'
