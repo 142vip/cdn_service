@@ -4,6 +4,8 @@ import { vipMainExportPath } from './vip-main-path'
 
 export const VIP_MAIN_SRC = {
   photos: vipMainExportPath('photos.json'),
+  videos: vipMainExportPath('videos.json'),
+  weChat: vipMainExportPath('we-chat.json'),
 } as const
 
 /** vip-main JSON 文件 CDN 链接 */
@@ -11,6 +13,14 @@ export const VIP_MAIN_CDN = {
   photos: {
     production: getProductionCdnUrl('vip-main/photos.json'),
     development: getDevelopmentCdnUrl('vip-main/photos.json'),
+  },
+  videos: {
+    production: getProductionCdnUrl('vip-main/videos.json'),
+    development: getDevelopmentCdnUrl('vip-main/videos.json'),
+  },
+  weChat: {
+    production: getProductionCdnUrl('vip-main/we-chat.json'),
+    development: getDevelopmentCdnUrl('vip-main/we-chat.json'),
   },
 } as const
 

@@ -8,6 +8,7 @@ export const MEDIA_SRC = {
     gitee: mediaExportPath('svg/gitee.svg'),
     github: mediaExportPath('svg/github.svg'),
     juejin: mediaExportPath('svg/juejin.svg'),
+    vipLogo: mediaExportPath('svg/vip-logo.svg'),
   },
   wechat: {
     chuFan443450x450: mediaExportPath('wechat/chu-fan-443-450x450.jpg'),

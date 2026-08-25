@@ -27,8 +27,11 @@ pnpm publish:cdn     # 发布 npm
 | --- | --- |
 | `MEDIA_SRC` | media 图片包内路径映射 |
 | `VIP_MAIN_SRC` / `VIP_MAIN_CDN` | vip-main JSON 包内路径与 CDN 链接 |
+| `CdnHostEnum` | CDN 镜像域名枚举（Statically / jsDelivr / Fastly） |
+| `resolveCdnHost(host?, fallback?)` | 应用侧 CDN 配置解析 |
 | `getVipMainProductionCdnUrl('photos.json')` | photos.json 生产环境 CDN URL |
-| `LifePhotoItem` | photos.json 单条数据类型 |
+
+升级替换见 [packages/cdn/README.md](../../packages/cdn/README.md#升级替换)（`VipCdnHost` → `CdnHostEnum` 等）。
 
 包内资源 subpath：
 
@@ -39,7 +42,7 @@ pnpm publish:cdn     # 发布 npm
 
 `assets/` 由 `pnpm sync:cdn` 生成（gitignore），发布 npm 前需执行 `pnpm build:cdn`。
 
-配置：`packages/cdn/src/config.ts`（与 site 逻辑一致，独立维护）
+配置：`packages/cdn/src/config.ts`（`CdnHostEnum` + `CDN_CONFIG`，site 侧 `site.config.ts` 独立维护）
 
 ## 配置入口
 
@@ -126,8 +129,7 @@ plugins/manifest.ts     build：写入 manifest.json（含 photoStories）
 - 数据：`apps/vip-main/photos.json`（`LifePhotoItem[]`）
 - 分类：`旅游` | `运动` | `做菜` | `钓鱼` | `日常`
 - 图片：`apps/vip-main/{folder}/...` 或外链 `https://...`
-- 工具函数：`types/photo-story.ts` → `isRemoteStoryImage`、`isAppsImagePath`、`resolveStoryImageUrl`
-- npm 类型：`@142vip/cdn` 导出 `LifePhotoItem`（与 site 侧结构一致）
+- 工具函数：`types/photo-story.ts` → `isRemoteStoryImage`、`isAppsImagePath`、`resolveStoryImageUrl`（site 本地类型，不随 npm 包导出）
 - dev API：`GET/PUT /__local/photos`
 - 构建：`manifest.json` 嵌入 `photoStories`
 - npm 同步：变更 `photos.json` 后执行 `pnpm sync:cdn`（或 `pnpm build:cdn`）更新 `@142vip/cdn` 包内资源
