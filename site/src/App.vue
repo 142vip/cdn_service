@@ -617,7 +617,7 @@ watch([selectedFile, fileList, fileViewMode], async () => {
   <ElDialog v-model="renameVisible" title="重命名文件" width="460px">
     <ElForm @submit.prevent="confirmRename">
       <ElFormItem label="新文件名">
-        <ElInput v-model="renameValue" placeholder="kebab-case.webp 或 icon.svg" autofocus />
+        <ElInput v-model="renameValue" placeholder="kebab-case.webp / icon.svg / favicon.ico" autofocus />
       </ElFormItem>
       <ElAlert
         v-if="renameSuggestion"

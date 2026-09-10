@@ -54,7 +54,7 @@ export function validateFile(relativePath: string, size: number): ValidationIssu
   }
 
   if (!siteConfig.allowedExtensions.includes(ext as AllowedExtension)) {
-    issues.push({ code: 'format', message: '仅允许 .jpg / .webp / .svg' })
+    issues.push({ code: 'format', message: '仅允许 .jpg / .webp / .svg / .ico' })
   }
 
   if (!siteConfig.kebabCaseRegex.test(fileName) && !siteConfig.chineseRegex.test(fileName)) {
@@ -88,7 +88,7 @@ function toKebabBase(raw: string): string {
   return base
 }
 
-/** 重命名时保留原扩展名（仅 jpg/webp/svg），不强制转 webp */
+/** 重命名时保留原扩展名（jpg/webp/svg/ico），不强制转 webp */
 function preserveRenameExtension(ext: string): string {
   if (ext === 'jpeg')
     return 'jpg'
