@@ -1,0 +1,59 @@
+---
+description: Git 提交规范；仅用户明确要求提交时生效
+alwaysApply: true
+---
+
+# Git 提交（cdn_service）
+
+## 门闩
+
+- **未**要求 commit → 不 stage、不 commit、不 push
+- **已**要求 commit → 按下列执行；**push 一律由用户手动**
+
+## 提交前必读
+
+```bash
+git status --short
+git diff --cached --stat
+git diff --cached
+git log --oneline -10
+```
+
+禁止不看 cached diff 就写 message。
+
+## 格式
+
+```
+<type>(<scope>): <subject>
+```
+
+- **type**：`feat` · `fix` · `docs` · `style` · `refactor` · `perf` · `test` · `build` · `ci` · `chore` · `revert` · `release`
+- **scope**（hook 白名单）：`408` · `jsc` · `vip-main` · `vip-admin` · `scripts` · `media` · `site`
+- **subject**：祈使、简洁；英文标识/路径用反引号；贴近 `git log` 文风
+
+## 分类提交
+
+- 一条 commit 一个目的；默认 ≤15 路径；禁止随手 `git add -A`
+- 多类改动拆批；scope 与 staged 路径一致
+- 文案与 diff 可追溯；禁止空洞套话
+
+## Commit trailer（绝对禁止）
+
+禁止任何 Agent / IDE / 大模型痕迹，包括：
+
+- `Co-authored-by: Cursor …`
+- `Made-with: Cursor`
+- 含 `cursoragent@cursor.com` 的行
+
+每条 `git commit` 成功后立刻检查并剔除（未 push 时允许仅为此 `amend`）：
+
+```bash
+raw="$(git log -1 --format=%B)"
+clean="$(git log -1 --format=%B | sed -E '/^[[:space:]]*Co-authored-by:[[:space:]]*Cursor /Id;/^[[:space:]]*Made-with:[[:space:]]*Cursor/Id;/^[[:space:]]*Co-authored-by:.*cursoragent@cursor\.com/Id' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}')"
+[ "$raw" != "$clean" ] && git commit --amend -m "$clean"
+```
+
+## 其它
+
+- 禁止改 `git config`、禁止 `--no-verify`、禁止对主分支 force push（除非用户明文要求）
+- hook 失败：修复后 **新** commit，不 amend 已推送提交

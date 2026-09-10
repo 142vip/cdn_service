@@ -1,0 +1,39 @@
+---
+description: 本仓执行管线、最小改动与交付纪律（始终生效）
+alwaysApply: true
+---
+
+# 执行管线（cdn_service）
+
+## 读取顺序
+
+1. 根 `AGENTS.md`（边界 / 命令 / Git）
+2. 本目录 `.cursor/rules`（含 `cdn-playbook.mdc` 图床业务）
+3. 目标模块 `README` + 同域 3～5 个现有文件（对齐风格）
+
+冲突优先级：`AGENTS.md` > `.cursor/rules` > `.agents/skills` 镜像说明。
+
+## 场景策略
+
+| 场景 | 做法 |
+| --- | --- |
+| ≤3 文件小改 | 读目标 + 1 个参考 → 改 → 局部 lint |
+| 单模块（site / packages/cdn / apps 某目录） | README + 同域链路 → 改 → lint → 受影响 build |
+| 跨模块（如 apps JSON + site + sync） | **先定契约**（路径/字段）→ 低层资源 → 生成物 sync → 调用方 |
+| 仅文档 / rules | `git diff --check`，不跑 `build:site` |
+| 调查问答 | 只读总结，不写文件除非用户要求 |
+
+## 铁律
+
+- **最小改动**：每行可追溯到用户需求；不碰无关 uncommitted diff
+- **交付 ≠ 提交**：默认只交付结果；**仅用户明确要求**才 `git commit`；**禁止** `git push`
+- **诚实验证**：未执行的命令不得写「应该会通过」
+- **回复精简**（中文）：结论 → 验证（真实命令结果）→ 变更路径清单
+- **禁止**全仓无目的扫描、默认全仓 lint/build、脚本批量改无关文件
+- **禁止**对外文档引用内部 `.cursor/rules` 路径
+
+## 进程与端口
+
+- Dev：`7800` · Preview：`7810`（`site/vite.config.ts`）
+- 启动前探测端口；已被占用且服务存活 → **复用**，不擅自改端口另起实例
+- 后台 dev 任务结束前关闭进程，避免残留
