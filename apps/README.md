@@ -8,7 +8,7 @@
 | --- | --- |
 | [408](./408) | 408CSFamily 项目资源 |
 | [jsc](./jsc) | JavaScriptCollection 项目资源 |
-| [vip-main](./vip-main) | 142vip 主站资源（含 `photos.json` 照片墙） |
+| [vip-main](./vip-main) | 142vip 主站（`photos/` · `videos/` · `we-chat/` 与 JSON 数据） |
 | [media](./%20media) | 自媒体宣传资源（公众号等，同步至 `@142vip/cdn`） |
 | [vip-admin](./vip-admin) | VIP 管理端资源（预留） |
 

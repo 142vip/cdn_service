@@ -1,35 +1,40 @@
 # vip-main
 
-142vip 主站静态资源，按生活场景分类存放图片。
+142vip 主站静态资源与 JSON 数据，供 142vip.cn 照片墙、视频列表、公众号文章等模块引用。
 
 ## 目录说明
 
-| 目录 | 说明 |
-| --- | --- |
-| [travel](./travel) | 旅游出行 |
-| [sports](./sports) | 运动健身 |
-| [cooking](./cooking) | 做菜美食 |
-| [fishing](./fishing) | 钓鱼休闲 |
-| [daily](./daily) | 日常生活 |
+| 目录 | 数据文件 | 说明 |
+| --- | --- | --- |
+| [photos](./photos) | [`photos.json`](./photos.json) | 照片墙图片与封面，按生活场景分子目录 |
+| [videos](./videos) | [`videos.json`](./videos.json) | B 站等外链视频条目，本地仅存封面或占位图 |
+| [we-chat](./we-chat) | [`we-chat.json`](./we-chat.json) | 公众号文章列表，本地存放封面图 |
 
-## 图片故事
+## JSON 数据
 
-[`photos.json`](./photos.json) 管理 142vip.cn 站点照片墙数据，类型为 `LifePhotoItem[]`：
+### photos.json（照片墙）
 
-| 字段 | 说明 |
-| --- | --- |
-| `id` | 唯一编号 |
-| `title` | 标题 |
-| `description` | 描述（支持换行） |
-| `category` | 中文分类：`旅游` / `运动` / `做菜` / `钓鱼` / `日常` |
-| `date` | 日期 `YYYY-MM-DD` |
-| `images` | 图片路径数组（`apps/vip-main/...` 或 `https://...`） |
-| `location` | 可选，地点 |
-| `tags` | 可选，标签数组 |
+类型为 `LifePhotoItem[]`，字段见 [`photos/README.md`](./photos/README.md)。
 
-本地开发时可通过侧栏「图片故事」编辑；在「图床管理」中浏览并双击 `photos.json` 可预览 JSON；构建后数据嵌入 `manifest.json` 供 GitHub Pages 只读展示。
+- `images`：图片路径数组，推荐 `apps/vip-main/photos/{分类}/...` 或外链 `https://...`
+- 分类与目录对应：`旅游` → `photos/travel`，`运动` → `photos/sports`，`做菜` → `photos/cooking`，`钓鱼` → `photos/fishing`，`日常` → `photos/daily`
 
-npm 包 `@142vip/cdn` 会同步打包 `photos.json` 至 `assets/vip-main/`，可直接 `import` 或通过 `VIP_MAIN_CDN.photos.production` 获取 CDN 链接。变更后执行 `pnpm sync:cdn`（或 `pnpm build:cdn`）更新 npm 包资源。
+### videos.json（视频列表）
+
+- `videos`：视频链接数组（如 B 站 URL）
+- 封面可选放在 `videos/` 下，路径写入 JSON 或沿用外链
+
+### we-chat.json（公众号文章）
+
+- `coverUrl`：封面地址，推荐 `apps/vip-main/we-chat/{articleId}.webp` 或外链
+- `articleId`：文章唯一 ID，与本地封面文件名对应
+
+## 本地管理
+
+- 侧栏「图片故事」编辑 `photos.json`（dev 可写，预览只读）
+- 图床管理双击 JSON 可预览；构建后 `photos.json` 嵌入 `manifest.json`
+
+npm 包 `@142vip/cdn` 会同步打包 JSON 至 `assets/vip-main/`，执行 `pnpm sync:cdn` 更新。
 
 ## 规范
 
