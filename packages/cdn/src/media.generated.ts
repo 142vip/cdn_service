@@ -2,6 +2,10 @@
 import { mediaExportPath } from './media-path'
 
 export const MEDIA_SRC = {
+  icons: {
+    vipFavicon: mediaExportPath('icons/vip-favicon.ico'),
+    xFavicon: mediaExportPath('icons/x-favicon.ico'),
+  },
   svg: {
     bilibili: mediaExportPath('svg/bilibili.svg'),
     csdn: mediaExportPath('svg/csdn.svg'),
@@ -9,6 +13,7 @@ export const MEDIA_SRC = {
     github: mediaExportPath('svg/github.svg'),
     juejin: mediaExportPath('svg/juejin.svg'),
     vipLogo: mediaExportPath('svg/vip-logo.svg'),
+    xLogo: mediaExportPath('svg/x-logo.svg'),
   },
   wechat: {
     chuFan443450x450: mediaExportPath('wechat/chu-fan-443-450x450.jpg'),

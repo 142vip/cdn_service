@@ -28,11 +28,13 @@ pnpm add @142vip/cdn
 
 ```vue
 <script setup lang="ts">
+import vipFavicon from '@142vip/cdn/media/icons/vip-favicon.ico'
 import githubIcon from '@142vip/cdn/media/svg/github.svg'
 import wechatCode from '@142vip/cdn/media/wechat/chu-fan-code.jpg'
 </script>
 
 <template>
+  <link rel="icon" :href="vipFavicon">
   <img :src="githubIcon" alt="GitHub">
   <img :src="wechatCode" alt="微信公众号">
 </template>
@@ -46,6 +48,7 @@ import wechatCode from '@142vip/cdn/media/wechat/chu-fan-code.jpg'
 import { MEDIA_SRC } from '@142vip/cdn'
 
 const githubPath = MEDIA_SRC.svg.github
+const vipFaviconPath = MEDIA_SRC.icons.vipFavicon
 // '@142vip/cdn/media/svg/github.svg' — 供 bundler 解析或动态 import
 ```
 

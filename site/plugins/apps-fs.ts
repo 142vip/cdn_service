@@ -64,7 +64,7 @@ function validateFile(relativePath: string, size: number): ValidationIssue[] {
   if (siteConfig.chineseRegex.test(relativePath))
     issues.push({ code: 'chinese', message: '路径包含中文' })
   if (!siteConfig.allowedExtensions.includes(ext as typeof siteConfig.allowedExtensions[number]))
-    issues.push({ code: 'format', message: '仅允许 .jpg / .webp / .svg' })
+    issues.push({ code: 'format', message: '仅允许 .jpg / .webp / .svg / .ico' })
   if (!siteConfig.kebabCaseRegex.test(fileName) && !siteConfig.chineseRegex.test(fileName))
     issues.push({ code: 'naming', message: '需 kebab-case 命名' })
   if (size > siteConfig.maxFileSize)

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 
+## v0.0.1-alpha.3 (2026-09-10)
+
+**No Significant Changes**
+
 ## v0.0.1-alpha.2 (2026-08-25)
 
 ### 💅 Refactors

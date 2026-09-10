@@ -37,6 +37,7 @@
     "preview:site": "pnpm -C site exec vite preview"
   },
   "devDependencies": {
+    "@142vip/agent-skills": "0.0.1-alpha.6",
     "@142vip/changelog": "0.0.1-alpha.23",
     "@142vip/commit-linter": "0.0.1-alpha.2",
     "@142vip/eslint-config": "0.0.1-alpha.5",

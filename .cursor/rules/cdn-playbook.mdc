@@ -1,0 +1,56 @@
+---
+description: 图床业务落点、上传流程、site UI 与 photos.json 操作约束
+alwaysApply: true
+---
+
+# 图床工作手册（cdn_service）
+
+GitHub 图床：`apps/` 托管静态资源，Statically / jsDelivr 加速；`site/` 本地管理 / Pages 浏览。
+
+## 双模式
+
+| 模式 | 命令 | 行为 |
+| --- | --- | --- |
+| 本地管理 | `pnpm dev:site` | 读写 `apps/`（裁剪、重命名、转 WebP、删除） |
+| CDN 浏览 | `pnpm build:site` / `preview:site` | 只读 + 复制 CDN 链接 |
+
+## 上传 / 改资源（Agent 必做）
+
+1. 校验：kebab-case、无中文、`.webp` / `.jpg` / `.svg` / `.ico`、≤ 2MB
+2. PNG 等不合规格式 → 转 WebP（或 JPG）；超 2MB → 压缩后再写入；`.ico` 放入 `apps/media/icons/`
+3. 放入对应 `apps/{项目}/…`；图片故事图优先 `apps/vip-main/photos/{travel|sports|cooking|fishing|daily}/`
+4. 更新该目录 README 文件表（若有）
+5. 搜仓库是否引用旧路径并更新
+6. 改了 `apps/media/**` 或 `apps/vip-main/**/*.json` → **`pnpm sync:cdn`**
+7. 回复给出 CDN 路径形态：`https://{CDN}/gh/142vip/cdn_service@{分支}/apps/{项目}/{路径}/{文件}`
+
+生产分支 `main` · 开发 `next`。默认 host：`cdn.statically.io`。
+
+## site UI 落点（改界面时对齐）
+
+| 区域 | 约定 |
+| --- | --- |
+| 侧栏视图 | `files` 图床管理 · `stories` 图片故事；键 `cdn-site-sidebar-view` |
+| 图床预览 | 双击图片 → `ImagePreviewDialog`；双击 JSON → `JsonPreviewDialog` |
+| 预览条 | `CdnPreviewBar`：分支 / CDN / URL / 圆形图标复制 |
+| 图片故事 | `PhotoStoriesPanel`；双击全屏 `StoryImagePreview`；列表可拖拽排序 |
+| JSON | 在图床树中双击，**不再**单独 JSON 侧栏 |
+
+localStorage：`cdn-site-sidebar-visible` · `cdn-site-sidebar-view` · `cdn-site-file-view`（`list`/`grid`）。
+
+## 图片故事
+
+- 数据：`apps/vip-main/photos.json`（`LifePhotoItem[]`）
+- 分类中文：`旅游` | `运动` | `做菜` | `钓鱼` | `日常`
+- 路径：`apps/vip-main/photos/{分类}/…` 或 `https://` 外链
+- 类型工具在 `site/src/types/photo-story.ts`（**不**随 `@142vip/cdn` 导出）
+- dev API：`GET/PUT /__local/photos`；preview 只读
+- 变更后 `pnpm sync:cdn`
+
+## 发 @142vip/cdn
+
+`pnpm sync:cdn` → `pnpm build:cdn` → `pnpm prepublish:cdn`（dry-run）→ `pnpm publish:cdn`
+
+## 遗留（勿当新规范）
+
+- `apps/408/ukulele/` 部分中文/旧名；`apps/media/` 历史前导空格；部分 `.png`/`.jpeg` 待迁

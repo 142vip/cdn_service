@@ -19,8 +19,8 @@ export const siteConfig = {
 
   appsPrefix: 'apps',
   maxFileSize: 2 * 1024 * 1024,
-  allowedExtensions: ['jpg', 'webp', 'svg'] as const,
-  kebabCaseRegex: /^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:jpg|webp|svg)$/,
+  allowedExtensions: ['jpg', 'webp', 'svg', 'ico'] as const,
+  kebabCaseRegex: /^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:jpg|webp|svg|ico)$/,
   chineseRegex: /[\u4E00-\u9FA5]/,
   sidebarWidth: 300,
 
@@ -45,11 +45,11 @@ export const siteConfig = {
   photoStories: {
     filePath: 'apps/vip-main/photos.json',
     categories: [
-      { value: '旅游', label: '旅游', folder: 'travel' },
-      { value: '运动', label: '运动', folder: 'sports' },
-      { value: '做菜', label: '做菜', folder: 'cooking' },
-      { value: '钓鱼', label: '钓鱼', folder: 'fishing' },
-      { value: '日常', label: '日常', folder: 'daily' },
+      { value: '旅游', label: '旅游', folder: 'photos/travel' },
+      { value: '运动', label: '运动', folder: 'photos/sports' },
+      { value: '做菜', label: '做菜', folder: 'photos/cooking' },
+      { value: '钓鱼', label: '钓鱼', folder: 'photos/fishing' },
+      { value: '日常', label: '日常', folder: 'photos/daily' },
     ] as const,
   },
 

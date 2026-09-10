@@ -1,0 +1,50 @@
+---
+description: site 管理界面与 @142vip/cdn 包改动约束
+globs: "{site,packages/cdn,scripts}/**"
+alwaysApply: false
+---
+
+# site 与 @142vip/cdn
+
+## 配置入口
+
+| 配置 | 路径 |
+| --- | --- |
+| 站点唯一配置 | `site/src/site.config.ts`（cdn、allowedExtensions、maxFileSize、footer、photoStories、sidebarWidth） |
+| npm 包 CDN | `packages/cdn/src/config.ts`（`CdnHostEnum` + `CDN_CONFIG`） |
+
+禁止第三套域名/扩展名配置源。site 与包配置各自维护，勿混写。
+
+## site 架构落点
+
+| 需求 | 落点 |
+| --- | --- |
+| 扫描树 / CRUD / 校验 | `plugins/apps-fs.ts` · `local-apps.ts` |
+| photos.json | `photos-json.ts` · `usePhotoStories.ts` · `PhotoStoriesPanel.vue` |
+| 构建清单 | `manifest.ts` → `manifest.json`（含 photoStories） |
+| 目录树 / 搜索 | `useFileBrowser.ts` · `useLocalFiles.ts` / `useManifest.ts` |
+| CDN 预览 | `CdnPreviewBar.vue` · `CdnSourcePicker.vue` · `useCdnPreviewState.ts` |
+| 图床展示回退 | `useAppsImageDisplay.ts` · `useAppsJsonContent.ts` |
+| 预览弹窗 | `ImagePreviewDialog` · `JsonPreviewDialog` · `StoryImagePreview` |
+| 双模式 | `pnpm dev:site` 读写 · `build:site` / Pages 只读 |
+
+样式优先复用：`.panel-toolbar` · `.filter-pills` · `.sidebar-view-select` · `.cdn-preview-bar` · `.ui-actions`。
+
+## @142vip/cdn
+
+```bash
+pnpm sync:cdn         # media + vip-main JSON → assets + MEDIA_SRC / VIP_MAIN_SRC / VIP_MAIN_CDN
+pnpm build:cdn        # sync + tsup；发版前必须
+pnpm prepublish:cdn   # dry-run
+pnpm publish:cdn
+```
+
+导出：`MEDIA_SRC` · `VIP_MAIN_SRC` / `VIP_MAIN_CDN` · `CdnHostEnum` · `resolveCdnHost` · `getVipMainProductionCdnUrl`。
+subpath：`./media/*` → `assets/media/*`；`./vip-main/*` → `assets/vip-main/*`。
+`assets/` 由 sync 生成（gitignore）。导出变更同步 `packages/cdn/README.md` 与根 README。
+
+Pages：`.github/workflows/deploy-pages.yml`，`main`/`next` push；地址 `https://142vip.github.io/cdn_service/`。
+
+## 端口
+
+dev `7800` · preview `7810`；改端口须同步 `AGENTS.md` / README。

@@ -1,0 +1,40 @@
+---
+description: 改完自检：局部 lint、受影响 build、文档同步（始终提醒）
+alwaysApply: true
+---
+
+# 改完自检（cdn_service）
+
+同一轮回复内完成验证。日常局部优先；用户要求交付/全量验收再收口。
+
+## 日常（默认）
+
+| 步骤 | 动作 |
+| --- | --- |
+| 1 | 对照 `AGENTS.md` 抽查边界与规范 |
+| 2 | 删未使用 import / 变量 / 死代码 |
+| 3 | 局部 lint：`pnpm exec eslint --fix --max-warnings 0 <改动路径…>` 或 `pnpm lint:fix`（改动面大时） |
+| 4 | 受影响 build（见下表） |
+| 5 | 文档 / README / `.cursor/rules` 与行为不一致则同步 |
+
+## Build 映射
+
+| 改动落点 | 验证 |
+| --- | --- |
+| `site/**` | `pnpm build:site`（或至少改动相关 `vue-tsc`/页面可运行） |
+| `packages/cdn/src/**`、`scripts/sync-media.ts` | `pnpm build:cdn` |
+| `apps/media/**`、`apps/vip-main/**/*.json` | `pnpm sync:cdn`（确认 generated 更新） |
+| 仅 `apps/` 图片/README | 合规校验逻辑即可；不必 build site |
+| 仅 `AGENTS.md` / `.cursor/**` / `.agents/**` | `git diff --check` |
+
+## 交付收口（用户明确要求时）
+
+- 再跑改动路径 lint + 上表受影响 build
+- 根 `pnpm lint` 若本仓要求交付全量则执行并附真实结果
+- **自检通过 ≠ 可自动提交**
+
+## 禁止
+
+- 默认每轮全仓 lint + 全应用 build
+- 未执行却写「通过」
+- 无 `TODO.md` 时擅自新建（本仓当前无则跳过）

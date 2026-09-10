@@ -137,7 +137,19 @@ function storyImageUrl(path: string): string {
 }
 
 function imageFolder(path: string): string {
-  return path.match(/^apps\/vip-main\/([^/]+)\//)?.[1] ?? 'other'
+  if (!path.startsWith('apps/vip-main/'))
+    return 'other'
+  const relative = path.slice('apps/vip-main/'.length)
+  const matched = categoryOptions.find(
+    category => relative.startsWith(`${category.folder}/`) || relative === category.folder,
+  )
+  if (matched)
+    return matched.folder
+  if (relative.startsWith('we-chat/'))
+    return 'we-chat'
+  if (relative.startsWith('videos/'))
+    return 'videos'
+  return 'other'
 }
 
 const groupedPickerImages = computed(() => {
@@ -283,7 +295,7 @@ function removeImageField(index: number) {
 
 function openImagePicker(index: number) {
   pickerTargetIndex.value = index
-  pickerCategory.value = categoryOptions.find(item => item.value === form.category)?.folder ?? 'daily'
+  pickerCategory.value = categoryOptions.find(item => item.value === form.category)?.folder ?? 'photos/daily'
   pickerVisible.value = true
 }
 
@@ -731,7 +743,7 @@ async function submitForm() {
               @dragover="onImageDragOver(index, $event)"
               @drop="onImageDrop(index)"
             >
-              <ElInput v-model="form.images[index]" :placeholder="`apps/vip-main/${categoryOptions.find(item => item.value === form.category)?.folder ?? 'daily'}/example.webp`">
+              <ElInput v-model="form.images[index]" :placeholder="`apps/vip-main/${categoryOptions.find(item => item.value === form.category)?.folder ?? 'photos/daily'}/example.webp`">
                 <template #append>
                   <ElButton plain @click="openImagePicker(index)">
                     选择

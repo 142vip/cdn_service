@@ -15,7 +15,7 @@ const vipMainSource = path.join(repoRoot, 'apps', 'vip-main')
 const vipMainTarget = path.join(pkgDir, 'assets/vip-main')
 const vipMainGeneratedFile = path.join(pkgDir, 'src/vip-main.generated.ts')
 
-const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.webp', '.svg', '.png', '.gif'])
+const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.webp', '.svg', '.png', '.gif', '.ico'])
 
 interface MediaTree {
   [key: string]: string | MediaTree

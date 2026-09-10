@@ -1,0 +1,48 @@
+---
+description: TypeScript / Vue 编码纪律（禁止 any、最小改动、贴业务命名）
+globs: "**/*.{ts,vue,js,mjs,cjs}"
+alwaysApply: false
+---
+
+# 代码开发（本仓）
+
+本仓栈：Vue 3 · Vite · TS · `@142vip/utils`。无 Nest / ORM；勿套用后端分层套路。
+
+## 原则
+
+1. 正确优先 · 最小改动 · 风格对齐周边文件
+2. 注释写「为什么」与模块职责；删注释废码，交给 Git
+3. 优先复用 `@142vip/utils` 与同模块已有工具，禁止同义一层包装
+
+## 类型（强制）
+
+| 规则 | 要求 |
+| --- | --- |
+| 禁止 `any` | 新增/触及代码一律不用 |
+| 慎用 `unknown` | 仅外部边界且同函数内立刻收窄 |
+| 少用 `as` | 边界单点并注释原因 |
+| 尽最大努力声明类型 | 对齐同模块既有 `interface` / 联合 / 枚举 |
+
+## 命名与常量
+
+- 可发音、贴业务；禁止默认空壳名：`result` / `data` / `info` / `temp` / `item`（业界固定缩写除外）
+- 同概念同词；魔法值进常量 / `as const` / `enum`（成员显式字面量）
+- 简单常量 `SCREAMING_SNAKE`；类型/组件 `PascalCase`；函数变量 `camelCase`
+
+## Vue（site）
+
+- 优先 `<script setup lang="ts">`
+- 配置只改 `site/src/site.config.ts`（勿再开第二套配置源）
+- API / 本地文件系统走 `composables` + `plugins`；页面不散落裸协议细节
+- 可选项无值不传；主题色走已有 CSS 变量 / 全局类（`.panel-toolbar` · `.filter-pills` · `.cdn-preview-bar` 等）
+
+## 函数与结构
+
+- 一函数一事；参数宜 ≤2，再多收 options
+- 禁止有害内联 `(await …)`；先赋业务名再使用
+- 禁止无意义 `buildXxxResult` 薄工厂；可直接 `return { … }`
+- 已是数组禁止无意义 `[...arr]`；排序用 `toSorted` 等避免突变共享引用
+
+## 改完
+
+局部 lint → 受影响 build（见 `self-check` rule）→ 文档若受影响则同步。

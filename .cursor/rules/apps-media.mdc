@@ -1,0 +1,41 @@
+---
+description: apps/ 图床资源规范与目录约定
+globs: apps/**
+alwaysApply: false
+---
+
+# 图床资源（apps/）
+
+## 目录职责
+
+| 目录 | 用途 |
+| --- | --- |
+| `apps/408` | 408CSFamily |
+| `apps/jsc` | JavaScriptCollection |
+| `apps/vip-main` | 主站：`photos/` · `videos/` · `we-chat/` + JSON |
+| `apps/media` | 自媒体（`svg/` · `icons/` · `wechat/` 等） |
+| `apps/vip-admin` | 管理端（预留） |
+
+改目录结构或 README 时，同步父级 `apps/**/README.md` 与 `.cursor/rules/apps-media.mdc` / `cdn-playbook.mdc`。
+
+## 图片规范
+
+| 规则 | 要求 |
+| --- | --- |
+| 格式 | `.webp` / `.jpg` / `.svg` / `.ico`；JSON 只校验路径中文与大小 |
+| 大小 | ≤ 2MB |
+| 命名 | kebab-case，**无中文** |
+| 重命名 | 保留原扩展名，不自动转 webp |
+| 裁剪另存 | 默认 webp，可选 jpg；`{base}-{宽}x{高}.ext` |
+
+校验真源：`site/src/utils/validate.ts` · `site/plugins/apps-fs.ts` · `site.config.allowedExtensions`。
+
+## vip-main / media 联动
+
+- 变更 `apps/media/**` 或 `apps/vip-main/**/*.json` 后执行 **`pnpm sync:cdn`**
+- **禁止**手改 `packages/cdn/assets/**` 与 `*.generated.ts`
+- 图片故事：`photos.json` + `photos/{travel|sports|cooking|fishing|daily}/`
+
+## README
+
+每个资源子目录保持简短 README；增删文件后更新文件表。

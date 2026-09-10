@@ -24,6 +24,8 @@ cdn_service/
 ├── scripts/
 │   ├── sync-media.ts        # 同步 media / vip-main JSON、生成 MEDIA_SRC / VIP_MAIN_SRC
 │   └── verify-commit.ts     # commit-msg hook 校验
+├── AGENTS.md                # Agent / Cursor 本仓边界与命令（L0）
+├── .cursor/rules/           # Cursor 强制约束（含图床工作手册）
 ├── pnpm-workspace.yaml      # workspace 仅含 site，排除 apps/
 └── package.json             # 根脚本与工具链
 ```
@@ -74,7 +76,7 @@ https://{CDN域名}/gh/142vip/cdn_service@{分支}/apps/{项目}/{路径}/{文�
 示例：
 
 ```
-https://cdn.statically.io/gh/142vip/cdn_service@main/apps/vip-main/daily/example.webp
+https://cdn.statically.io/gh/142vip/cdn_service@main/apps/vip-main/photos/daily/example.webp
 ```
 
 | 环境 | 分支 | 用途 |
@@ -92,14 +94,16 @@ https://cdn.statically.io/gh/142vip/cdn_service@main/apps/vip-main/daily/example
 pnpm sync:cdn · build:cdn · prepublish:cdn · publish:cdn
 ```
 
-`pnpm sync:cdn` 会同步 `apps/media` 图片与 `apps/vip-main/**/*.json`（含 `photos.json`）至 npm 包 `assets/` 目录，并生成 `MEDIA_SRC`、`VIP_MAIN_SRC`、`VIP_MAIN_CDN`。
+`pnpm sync:cdn` 会同步 `apps/media`（含 `svg/` · `icons/` · `wechat/`）与 `apps/vip-main/**/*.json` 至 npm 包 `assets/`，并生成 `MEDIA_SRC`、`VIP_MAIN_SRC`、`VIP_MAIN_CDN`。
 
 ```ts
-import { getProductionCdnUrl, VIP_MAIN_CDN } from '@142vip/cdn'
+import { getProductionCdnUrl, MEDIA_SRC, VIP_MAIN_CDN } from '@142vip/cdn'
+import vipFavicon from '@142vip/cdn/media/icons/vip-favicon.ico'
 import wechatCode from '@142vip/cdn/media/wechat/chu-fan-code.jpg'
 import photos from '@142vip/cdn/vip-main/photos.json'
 
 const photosUrl = VIP_MAIN_CDN.photos.production
+const faviconExport = MEDIA_SRC.icons.vipFavicon
 ```
 
 详见 [packages/cdn/README.md](packages/cdn/README.md)。
@@ -108,7 +112,7 @@ const photosUrl = VIP_MAIN_CDN.photos.production
 
 | 规则 | 要求 |
 | --- | --- |
-| 格式 | 位图 `.webp`（推荐）或 `.jpg`；图标 `.svg` |
+| 格式 | 位图 `.webp`（推荐）或 `.jpg`；图标 `.svg`；favicon `.ico` |
 | 大小 | ≤ 2MB |
 | 命名 | kebab-case，禁止中文 |
 | README | 图片变更需同步更新对应目录 README |
