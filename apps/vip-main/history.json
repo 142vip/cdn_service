@@ -1,0 +1,103 @@
+{
+  "projects": [
+    {
+      "projectId": "142vip",
+      "name": "142vip 官网",
+      "tagline": "个人品牌主站与多频道展示",
+      "siteUrl": "https://142vip.cn",
+      "repoUrl": "https://github.com/142vip/142vip-oauth",
+      "displayMode": "inline",
+      "sortOrder": 5,
+      "events": [
+        {
+          "eventId": "vip-2024-main",
+          "date": "2024-06-01",
+          "title": "主站 Nuxt 4 重构",
+          "summary": "编程、生活、投资等频道统一 SSR 与主题体系",
+          "bullets": [
+            "三应用数据与 OAuth 演示收敛到 142vip-oauth monorepo",
+            "深浅色主题与移动端体验持续打磨"
+          ]
+        },
+        {
+          "eventId": "vip-2015-studio",
+          "date": "2015-01-01",
+          "title": "142vip.cn 上线",
+          "summary": "个人站点与开源品牌长期维护起点",
+          "bullets": [
+            "妍荣姑娘网络工作室旗下个人极客站点"
+          ]
+        }
+      ]
+    },
+    {
+      "projectId": "javascript-collection",
+      "name": "JavaScriptCollection",
+      "tagline": "开发笔记与前端工程化知识整理",
+      "siteUrl": "https://code.142vip.cn",
+      "repoUrl": "https://github.com/142vip/JavaScriptCollection",
+      "displayMode": "inline",
+      "sortOrder": 10,
+      "events": [
+        {
+          "eventId": "jsc-20201016",
+          "date": "2020-10-16",
+          "title": "站点导航与目录重构",
+          "summary": "大幅调整网站导航与文档结构，补齐对应章节",
+          "bullets": [
+            "导航栏、侧边栏内容调整",
+            "新增目录对应的文档"
+          ]
+        },
+        {
+          "eventId": "jsc-20200530",
+          "date": "2020-05-30",
+          "title": "第一次 GitHub 提交",
+          "summary": "开源旅程的起点",
+          "bullets": [
+            "完成第一次 Github 提交并开源"
+          ]
+        },
+        {
+          "eventId": "jsc-20200501",
+          "date": "2020-05-01",
+          "title": "项目成立",
+          "summary": "取名 JavaScriptCollection，开始系统性沉淀笔记",
+          "bullets": [
+            "项目成立，确立长期维护的开发笔记仓库"
+          ]
+        }
+      ]
+    },
+    {
+      "projectId": "408csfamily",
+      "name": "408CSFamily",
+      "tagline": "408 计算机统考学习资料与结构化笔记",
+      "siteUrl": "https://408.142vip.cn",
+      "repoUrl": "https://github.com/142vip/408CSFamily",
+      "displayMode": "inline",
+      "sortOrder": 20,
+      "events": [
+        {
+          "eventId": "408-20220101",
+          "date": "2022-01-01",
+          "title": "408 子站上线",
+          "summary": "与主站联动，支持按科目在线阅读",
+          "bullets": [
+            "数据结构、操作系统、计算机网络、组成原理分科目整理",
+            "持续补充真题思路与高频考点"
+          ]
+        },
+        {
+          "eventId": "408-20200601",
+          "date": "2020-06-01",
+          "title": "仓库创建",
+          "summary": "开始沉淀 408 统考相关资料",
+          "bullets": [
+            "建立 408CSFamily 开源仓库，面向长期可检索的知识库"
+          ]
+        }
+      ]
+    }
+  ]
+}
