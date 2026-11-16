@@ -1,0 +1,426 @@
+{
+  "categories": [
+    {
+      "categoryId": "knowledge",
+      "name": "知识库",
+      "description": "面试与计算机基础资料",
+      "sortOrder": 10,
+      "links": [
+        {
+          "linkId": "javaguide",
+          "name": "JavaGuide",
+          "url": "https://javaguide.cn",
+          "description": "Java 学习与面试指南",
+          "keywords": ["java", "面试"]
+        },
+        {
+          "linkId": "java-family",
+          "name": "JavaFamily",
+          "url": "https://github.com/AobingJava/JavaFamily",
+          "description": "阿里大佬整理的 Java 面试知识图谱",
+          "keywords": ["java", "github"]
+        },
+        {
+          "linkId": "java-interview-map",
+          "name": "Java 面试考察",
+          "url": "https://www.processon.com/view/5e86b713e4b0bf3ebcf4e376",
+          "description": "ProcessOn 思维导图",
+          "keywords": ["面试", "导图"]
+        }
+      ]
+    },
+    {
+      "categoryId": "vcs",
+      "name": "代码管理",
+      "description": "版本控制工具文档",
+      "sortOrder": 20,
+      "links": [
+        {
+          "linkId": "git-book-zh",
+          "name": "Git 中文文档",
+          "url": "https://git-scm.com/book/zh/v2",
+          "description": "官方 Pro Git 中文版"
+        },
+        {
+          "linkId": "svn-book-zh",
+          "name": "SVN 中文文档",
+          "url": "https://svnbook.red-bean.com/nightly/zh/index.html",
+          "description": "Subversion 版本库指南"
+        }
+      ]
+    },
+    {
+      "categoryId": "lint",
+      "name": "代码规范",
+      "sortOrder": 30,
+      "links": [
+        {
+          "linkId": "eslint-zh",
+          "name": "ESLint 中文文档",
+          "url": "http://nodejs.cn/eslint/",
+          "description": "JavaScript 代码检查"
+        }
+      ]
+    },
+    {
+      "categoryId": "frontend",
+      "name": "前端",
+      "description": "框架、文档站与 UI 库",
+      "sortOrder": 40,
+      "links": [
+        {
+          "linkId": "jquery-zh",
+          "name": "jQuery 中文文档",
+          "url": "https://jquery.cuishifeng.cn",
+          "description": "经典 DOM 工具库"
+        },
+        {
+          "linkId": "vue-zh",
+          "name": "Vue 中文文档",
+          "url": "https://cn.vuejs.org/",
+          "description": "渐进式 JavaScript 框架"
+        },
+        {
+          "linkId": "react-docs",
+          "name": "React 官方文档",
+          "url": "https://react.dev",
+          "description": "React 官方学习路径"
+        },
+        {
+          "linkId": "vuepress",
+          "name": "VuePress",
+          "url": "https://v2.vuepress.vuejs.org/zh",
+          "description": "静态站点生成器"
+        },
+        {
+          "linkId": "vuepress-hope",
+          "name": "VuePress Theme Hope",
+          "url": "https://theme-hope.vuejs.press/zh/",
+          "description": "VuePress 主题与插件生态"
+        },
+        {
+          "linkId": "view-ui",
+          "name": "View UI",
+          "url": "http://v4.iviewui.com/docs/introduce",
+          "description": "iView / View UI 组件库"
+        },
+        {
+          "linkId": "element-plus",
+          "name": "Element Plus",
+          "url": "https://element-plus.org/zh-CN/",
+          "description": "Vue 3 组件库"
+        }
+      ]
+    },
+    {
+      "categoryId": "wechat-eco",
+      "name": "微信生态",
+      "sortOrder": 50,
+      "links": [
+        {
+          "linkId": "wechat-miniprogram",
+          "name": "微信小程序",
+          "url": "https://developers.weixin.qq.com/miniprogram/dev/framework/",
+          "description": "小程序开发框架文档"
+        }
+      ]
+    },
+    {
+      "categoryId": "backend",
+      "name": "服务端",
+      "description": "语言、框架、中间件与运维",
+      "sortOrder": 60,
+      "links": [
+        {
+          "linkId": "nginx-docs",
+          "name": "Nginx",
+          "url": "https://nginx.org/en/docs/",
+          "description": "Web 服务器与反向代理"
+        },
+        {
+          "linkId": "nodejs-zh",
+          "name": "Node.js",
+          "url": "http://nodejs.cn",
+          "description": "Node.js 中文社区"
+        },
+        {
+          "linkId": "typescript-zh",
+          "name": "TypeScript",
+          "url": "http://nodejs.cn/typescript/",
+          "description": "TypeScript 中文手册"
+        },
+        {
+          "linkId": "golang-pkgdoc",
+          "name": "Go 语言",
+          "url": "https://studygolang.com/pkgdoc",
+          "description": "Go 标准库文档"
+        },
+        {
+          "linkId": "express-zh",
+          "name": "Express",
+          "url": "https://www.expressjs.com.cn",
+          "description": "Node.js Web 框架"
+        },
+        {
+          "linkId": "koa-zh",
+          "name": "Koa",
+          "url": "https://koajs.com",
+          "description": "轻量 Node 框架"
+        },
+        {
+          "linkId": "egg-zh",
+          "name": "Egg.js",
+          "url": "https://www.eggjs.org/zh-CN",
+          "description": "企业级 Node 框架"
+        },
+        {
+          "linkId": "nestjs",
+          "name": "NestJS",
+          "url": "https://nestjs.com",
+          "description": "渐进式 Node 服务端框架"
+        },
+        {
+          "linkId": "nestjs-zh",
+          "name": "NestJS 中文",
+          "url": "https://docs.nestjs.cn",
+          "description": "Nest 中文文档站"
+        },
+        {
+          "linkId": "midway",
+          "name": "Midway.js",
+          "url": "http://www.midwayjs.org",
+          "description": "阿里 Node 框架"
+        },
+        {
+          "linkId": "rabbitmq",
+          "name": "RabbitMQ",
+          "url": "https://www.rabbitmq.com/documentation.html",
+          "description": "消息队列"
+        },
+        {
+          "linkId": "rocketmq",
+          "name": "RocketMQ",
+          "url": "https://rocketmq.apache.org/docs/quickStart/01quickstart",
+          "description": "Apache 消息中间件"
+        },
+        {
+          "linkId": "kafka",
+          "name": "Kafka",
+          "url": "https://kafka.apache.org/documentation/",
+          "description": "分布式流处理平台"
+        },
+        {
+          "linkId": "docker",
+          "name": "Docker",
+          "url": "https://docs.docker.com/get-started",
+          "description": "容器入门"
+        },
+        {
+          "linkId": "kubernetes-zh",
+          "name": "Kubernetes",
+          "url": "https://kubernetes.io/zh-cn/docs/home/",
+          "description": "容器编排"
+        },
+        {
+          "linkId": "elasticsearch",
+          "name": "ElasticSearch",
+          "url": "https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html",
+          "description": "搜索与分析引擎"
+        },
+        {
+          "linkId": "jenkins",
+          "name": "Jenkins",
+          "url": "https://www.jenkins.io/zh/doc",
+          "description": "持续集成"
+        },
+        {
+          "linkId": "github-actions-zh",
+          "name": "GitHub Actions",
+          "url": "https://docs.github.com/zh/actions",
+          "description": "CI/CD 工作流"
+        }
+      ]
+    },
+    {
+      "categoryId": "database",
+      "name": "数据库与缓存",
+      "sortOrder": 55,
+      "links": [
+        {
+          "linkId": "mysql",
+          "name": "MySQL",
+          "url": "https://dev.mysql.com/doc/",
+          "description": "官方文档"
+        },
+        {
+          "linkId": "postgresql",
+          "name": "PostgreSQL",
+          "url": "https://www.postgresql.org/docs/",
+          "description": "官方文档"
+        },
+        {
+          "linkId": "redis",
+          "name": "Redis",
+          "url": "https://redis.io/docs/",
+          "description": "内存数据库"
+        },
+        {
+          "linkId": "mongodb",
+          "name": "MongoDB",
+          "url": "https://www.mongodb.com/docs/",
+          "description": "文档型数据库"
+        }
+      ]
+    },
+    {
+      "categoryId": "devtools",
+      "name": "开发工具",
+      "sortOrder": 45,
+      "links": [
+        {
+          "linkId": "vscode",
+          "name": "VS Code",
+          "url": "https://code.visualstudio.com/docs",
+          "description": "编辑器文档"
+        },
+        {
+          "linkId": "chrome-devtools",
+          "name": "Chrome DevTools",
+          "url": "https://developer.chrome.com/docs/devtools",
+          "description": "浏览器调试"
+        },
+        {
+          "linkId": "pnpm",
+          "name": "pnpm",
+          "url": "https://pnpm.io/zh/",
+          "description": "包管理器"
+        },
+        {
+          "linkId": "turbo",
+          "name": "Turborepo",
+          "url": "https://turbo.build/repo/docs",
+          "description": "Monorepo 构建"
+        }
+      ]
+    },
+    {
+      "categoryId": "community",
+      "name": "社区与资讯",
+      "sortOrder": 70,
+      "links": [
+        {
+          "linkId": "stackoverflow",
+          "name": "Stack Overflow",
+          "url": "https://stackoverflow.com",
+          "description": "问答社区"
+        },
+        {
+          "linkId": "v2ex",
+          "name": "V2EX",
+          "url": "https://www.v2ex.com",
+          "description": "创意工作者社区"
+        },
+        {
+          "linkId": "mdn",
+          "name": "MDN",
+          "url": "https://developer.mozilla.org/zh-CN/",
+          "description": "Web 技术文档"
+        },
+        {
+          "linkId": "can-i-use",
+          "name": "Can I Use",
+          "url": "https://caniuse.com",
+          "description": "浏览器兼容性"
+        }
+      ]
+    },
+    {
+      "categoryId": "cloud",
+      "name": "云服务与监控",
+      "sortOrder": 65,
+      "links": [
+        {
+          "linkId": "aliyun-doc",
+          "name": "阿里云文档",
+          "url": "https://help.aliyun.com/",
+          "description": "产品帮助中心"
+        },
+        {
+          "linkId": "tencent-cloud",
+          "name": "腾讯云文档",
+          "url": "https://cloud.tencent.com/document/product",
+          "description": "产品文档"
+        },
+        {
+          "linkId": "sentry",
+          "name": "Sentry",
+          "url": "https://docs.sentry.io/",
+          "description": "错误监控"
+        },
+        {
+          "linkId": "nginx-doc",
+          "name": "Nginx 文档",
+          "url": "https://nginx.org/en/docs/",
+          "description": "反向代理"
+        }
+      ]
+    },
+    {
+      "categoryId": "design",
+      "name": "设计与素材",
+      "sortOrder": 75,
+      "links": [
+        {
+          "linkId": "figma",
+          "name": "Figma",
+          "url": "https://www.figma.com/developers/api",
+          "description": "设计与协作"
+        },
+        {
+          "linkId": "unsplash",
+          "name": "Unsplash",
+          "url": "https://unsplash.com",
+          "description": "免费图库"
+        },
+        {
+          "linkId": "iconify",
+          "name": "Iconify",
+          "url": "https://iconify.design",
+          "description": "图标集合"
+        }
+      ]
+    },
+    {
+      "categoryId": "142vip",
+      "name": "142vip 站点",
+      "description": "主站与子项目入口",
+      "sortOrder": 5,
+      "links": [
+        {
+          "linkId": "vip-main",
+          "name": "142vip 主站",
+          "url": "https://142vip.cn",
+          "description": "个人品牌官网"
+        },
+        {
+          "linkId": "jsc-site",
+          "name": "JavaScriptCollection",
+          "url": "https://code.142vip.cn",
+          "description": "开发笔记在线站"
+        },
+        {
+          "linkId": "408-site",
+          "name": "408CSFamily",
+          "url": "https://408.142vip.cn",
+          "description": "408 学习子站"
+        },
+        {
+          "linkId": "vip-admin",
+          "name": "Panel 管理",
+          "url": "https://manager.142vip.cn",
+          "description": "线上管理后台"
+        }
+      ]
+    }
+  ]
+}
